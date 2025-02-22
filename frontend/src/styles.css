@@ -43,6 +43,7 @@
   margin-right: 20px; /* Add some spacing */
   animation: pausedFade 1s;
   transition: transform 0.2s;
+  font-family: pacifico;
 }
 
 .navbar-brand:hover {
@@ -59,6 +60,7 @@
   border-radius: 30px; /* Optional: Add rounded corners */
   animation: pausedFade 1.4s;
   transition: background-color 0.2s;
+  font-family: funnel display;
 }
 
 .nav-link:hover {
@@ -83,6 +85,7 @@
   border-radius: 30px;
   transition: background-color 0.2s;
   animation: pausedFade 1.8s;
+  font-family: funnel display;
 }
 
 .dropbtn:hover {
@@ -127,4 +130,7 @@
   0% {opacity: 0;}
   50% {opacity: 0;}
   100% {opacity: 100;}
+
+  0% {transform: translateY(100%);}
+  100% {transform: translateY(0%);}
 }
