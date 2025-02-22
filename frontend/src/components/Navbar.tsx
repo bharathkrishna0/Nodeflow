@@ -19,7 +19,6 @@ const Navbar: React.FC<NavbarProps> = () => {
         <Link to="/storage" className="nav-link">
           Storage
         </Link>{" "}
-        {/* Renamed Files to Storage */}
         <Link to="/todos" className="nav-link">
           Todos
         </Link>

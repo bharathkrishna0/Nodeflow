@@ -82,6 +82,7 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
     newWs.onmessage = (event) => {
       const message = JSON.parse(event.data) as Message;
       setMessages((prevMessages) => [...prevMessages, message]);
+      console.log(message);
 
       // Handle different message types
       switch (message.type) {
