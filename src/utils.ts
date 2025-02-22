@@ -12,15 +12,15 @@ export function createAuthUrl(sessionId: string, url: string): string {
 // Function to generate and send the QR code data URL via WebSocket
 export async function sendQRCodeViaWebSocket(
   ws: any,
-  context: any,
+  url: string,
   sessionId: string,
 ) {
   //  ws type could be more specific if you have a WS type defined
 
-  const qrAuthUrl = `${context.request.url.origin}/qr-login?session=${sessionId}`;
+  // const qrAuthUrl = `${url}/qr-login?session=${sessionId}`;
 
   try {
-    const qrCodeDataURL = await QRCode.toDataURL(qrAuthUrl);
+    const qrCodeDataURL = await QRCode.toDataURL(url);
     // Send the QR code data URL as a JSON message
     ws.send(JSON.stringify({ type: "qrCode", data: qrCodeDataURL }));
   } catch (err) {

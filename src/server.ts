@@ -3,15 +3,25 @@ import { staticPlugin } from "@elysiajs/static";
 import { cookie } from "@elysiajs/cookie";
 import { v4 as uuidv4 } from "uuid";
 import open from "open";
-import { sendQRCodeViaWebSocket, createAuthUrl } from "./utils";
+import { sendQRCodeViaWebSocket } from "./utils";
 ("./utils.ts");
 import path from "path";
 
+let Serverhostname: string = "";
+let Serverport: number = 0;
 const validOTP = "123456";
 const authenticatedSessions = new Set<string>();
+const requestLogger = () => (app: Elysia) =>
+  app.onRequest((context) => {
+    const timestamp = new Date().toISOString();
+    const method = context.request.method;
+    const url = context.request.url; // Or context.url for pathname only
+    console.log(`[HTTP Request - ${timestamp}] ${method} ${url}`); // Log method and full URL
+  });
 
 const app = new Elysia()
   .use(cookie())
+  .use(requestLogger())
   .use(
     staticPlugin({
       assets: path.resolve("./frontend/dist"),
@@ -20,6 +30,7 @@ const app = new Elysia()
   )
   .get("/", async (context) => {
     const sessionId = context.cookie.sessionId.value;
+    console.log(sessionId);
     if (sessionId && authenticatedSessions.has(sessionId)) {
       // User is authenticated, serve index.html
       return Bun.file(path.resolve("./frontend/dist/index.html"));
@@ -35,14 +46,18 @@ const app = new Elysia()
   .get("/qr-login", async (context) => {
     // Extract the session ID from the query parameters
     const sessionId = context.query.session;
+    // const lastIndex = sessionId.lastIndexOf("session=");
+    // const extractedSessionId = sessionId.substring(lastIndex + 8); // "sess
+    console.log(sessionId, "qrlogin");
 
     if (sessionId && authenticatedSessions.has(sessionId)) {
+      console.log("qrlogin sucessful");
       // Set the cookie for the user
       context.cookie.sessionId.set({
         value: sessionId,
         httpOnly: true,
         maxAge: 60 * 60 * 24 * 7,
-        sameSite: "strict",
+        // sameSite: "strict",
         path: "/",
       });
 
@@ -77,13 +92,16 @@ const app = new Elysia()
       console.log("WebSocket connection opened");
       // You can perform actions on connection open if needed
     },
-    message(ws, message) {
-      console.log(`Received message: ${message}`);
-      if (message === "generateQR") {
+    message(ws, message: any) {
+      // console.log(message, message[0], message[1]);
+      if (message.type === "requestAuthCode") {
+        console.log("authcode");
         const sessionId = uuidv4();
         authenticatedSessions.add(sessionId);
-        sendQRCodeViaWebSocket(ws, this, sessionId);
+        const qrLoginUrl = `http://${Serverhostname}:${Serverport}/qr-login?session=${sessionId}`;
+        sendQRCodeViaWebSocket(ws, qrLoginUrl, sessionId);
       }
+      console.log(`Received message: ${message}`);
       // ws.send(`Server received: ${message}`); // Echo back the message
     },
     close(ws) {
@@ -97,9 +115,13 @@ const app = new Elysia()
 export default app;
 
 export async function openHostBrowser(port: number, hostname: string) {
-  const sessionId = uuidv4();
+  let sessionId;
+  sessionId = uuidv4();
   authenticatedSessions.add(sessionId); // Add it to authenticatedSessions
+  // console.log(sessionId);
 
+  Serverhostname = hostname;
+  Serverport = port;
   // 2. Construct the *direct* qr-login URL
   const qrLoginUrl = `http://${hostname}:${port}/qr-login?session=${sessionId}`;
 

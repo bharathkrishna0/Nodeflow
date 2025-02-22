@@ -6,6 +6,6 @@ const hostname = "0.0.0.0";
 app.listen({ port: port, hostname: hostname }, () => {
   console.log(`Server started at http://${hostname}:${port}`);
 });
-openHostBrowser(port, hostname);
+openHostBrowser(port, "192.168.1.3");
 
 console.log(`Elysia is running on port ${app.server?.port}`);

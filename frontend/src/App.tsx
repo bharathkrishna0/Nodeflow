@@ -7,25 +7,23 @@ import Todos from "./components/Todos";
 // import Auth from "./components/Auth";
 import Navbar from "./components/Navbar";
 import { WebSocketProvider } from "./api";
-import { AuthProvider } from "./authContext";
+// import { AuthProvider } from "./authContext";
 import "./styles.css";
 
 function App() {
   return (
-    <AuthProvider>
-      <WebSocketProvider>
-        <Router>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/storage" element={<Storage />} />
-            <Route path="/journal" element={<TextEditor />} />
-            <Route path="/todos" element={<Todos />} />
-            {/* <Route path="/auth" element={<Auth />} /> */}
-          </Routes>
-        </Router>
-      </WebSocketProvider>
-    </AuthProvider>
+    <WebSocketProvider>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/storage" element={<Storage />} />
+          <Route path="/journal" element={<TextEditor />} />
+          <Route path="/todos" element={<Todos />} />
+          {/* <Route path="/auth" element={<Auth />} /> */}
+        </Routes>
+      </Router>
+    </WebSocketProvider>
   );
 }
 

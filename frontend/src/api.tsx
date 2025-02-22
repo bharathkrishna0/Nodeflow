@@ -4,155 +4,172 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  ReactNode,
 } from "react";
 
-// --- Define Message Types ---
-interface AuthCodeMessage {
-  type: "authCode";
-  payload: {
-    code: string;
-    qrCode: string;
-  };
+interface WebSocketContextProps {
+  children: React.ReactNode;
 }
 
-interface DevicesUpdateMessage {
-  type: "devicesUpdate";
-  payload: { id: string; name: string }[];
-}
-
-interface RequestAuthCodeMessage {
-  type: "requestAuthCode";
-  // No payload needed for this message type
-}
-
-interface RemoveDeviceMessage {
-  type: "removeDevice";
-  payload: string;
-}
-
-// Union type
-type Message =
-  | AuthCodeMessage
-  | DevicesUpdateMessage
-  | RequestAuthCodeMessage
-  | RemoveDeviceMessage;
-
-// --- WebSocketContextType ---
-interface WebSocketContextType {
-  ws: WebSocket | null;
-  messages: Message[];
-  sendMessage: (message: Message) => void;
+// Extend WebSocketContextValue to include auth-related data and functions
+interface WebSocketContextValue {
+  sendMessage: (message: string) => void;
+  latestMessage: string | null;
   isConnected: boolean;
-  authCode: string;
-  qrCodeData: string;
-  requestAuthCode: () => void;
-  connectedDevices: { id: string; name: string }[];
-  removeDevice: (deviceId: string) => void;
+  error: Event | null;
+  connect: () => void;
+  disconnect: () => void;
+  requestAuthCode: () => void; // Function to request auth code
+  qrCodeData: string | null; // State for QR code data
+  authCode: string | null; // State for one-time auth code
+  connectedDevices: string[]; // Example: array of device IDs, adjust type as needed
 }
 
-// Create the context
-const WebSocketContext = createContext<WebSocketContextType | null>(null);
+const WebSocketContext = createContext<WebSocketContextValue | undefined>(
+  undefined,
+);
 
-// WebSocketProvider component
-export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
+export const WebSocketProvider: React.FC<WebSocketContextProps> = ({
   children,
 }) => {
-  const [ws, setWs] = useState<WebSocket | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [latestMessage, setLatestMessage] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [authCode, setAuthCode] = useState<string>("");
-  const [qrCodeData, setQrCodeData] = useState<string>("");
-  const [connectedDevices, setConnectedDevices] = useState<
-    { id: string; name: string }[]
-  >([]);
+  const [error, setError] = useState<Event | null>(null);
 
-  const url = `ws://${window.location.hostname}:3000/ws`;
-  // const url = `ws://192.168.1.3:3000`;
+  // New states for authentication data
+  const [qrCodeData, setQrCodeData] = useState<string | null>(null);
+  const [authCode, setAuthCode] = useState<string | null>(null);
+  const [connectedDevices, setConnectedDevices] = useState<string[]>([]); // Initialize as empty array
+
+  // Dynamically construct the WebSocket URL
+  const websocketURL = `${window.location.origin.replace(/^http/, "ws")}/ws`;
 
   const connect = useCallback(() => {
-    const newWs = new WebSocket(url);
-    console.log(newWs);
+    if (socket && socket.readyState !== WebSocket.CLOSED) {
+      console.warn("WebSocket is already connecting or connected.");
+      return;
+    }
 
-    newWs.onopen = () => {
-      console.log("WebSocket connected");
+    const ws = new WebSocket(websocketURL);
+    setSocket(ws);
+    setIsConnected(false);
+    setError(null);
+
+    ws.onopen = () => {
+      console.log("WebSocket connected to:", websocketURL);
       setIsConnected(true);
+      setError(null);
     };
 
-    newWs.onmessage = (event) => {
-      const message = JSON.parse(event.data) as Message;
-      setMessages((prevMessages) => [...prevMessages, message]);
-      console.log(message);
+    ws.onmessage = (event) => {
+      console.log("WebSocket message received:", event.data);
+      setLatestMessage(String(event.data));
+      setError(null);
 
-      // Handle different message types
-      switch (message.type) {
-        case "authCode":
-          setAuthCode(message.payload.code);
-          setQrCodeData(message.payload.qrCode);
-          break;
-        case "devicesUpdate":
-          setConnectedDevices(message.payload);
-          break;
-        // ... other cases ...
+      // **Parse incoming messages and update state based on message type**
+      try {
+        const messageData = JSON.parse(String(event.data));
+        if (messageData.type === "qrCode") {
+          setQrCodeData(messageData.data);
+          setAuthCode(null); // Clear other auth data when QR code is received
+          setConnectedDevices([]); // Clear device list as well if needed, adjust as per your logic
+        } else if (messageData.type === "authCode") {
+          setAuthCode(messageData.data);
+          setQrCodeData(null); // Clear QR code data when auth code is received
+          setConnectedDevices([]); // Clear device list if needed
+        } else if (messageData.type === "deviceList") {
+          setConnectedDevices(messageData.devices); // Assuming data is an array of device IDs
+          setQrCodeData(null); // Clear other auth data
+          setAuthCode(null);
+        }
+        // Add more message type handling as needed for your application
+      } catch (e) {
+        console.warn("Failed to parse WebSocket message as JSON:", e);
+        // Handle non-JSON messages or errors if needed
       }
     };
 
-    newWs.onclose = () => {
-      console.log("WebSocket disconnected");
+    ws.onclose = (event) => {
+      console.log("WebSocket disconnected:", event.code, event.reason);
       setIsConnected(false);
-      setTimeout(connect, 5000);
+      setSocket(null);
+      setError(null);
+      // Clear all auth related states on disconnect as well, if that's desired behavior
+      setQrCodeData(null);
+      setAuthCode(null);
+      setConnectedDevices([]);
     };
 
-    newWs.onerror = (error) => {
-      console.error("WebSocket error:", error);
-      newWs.close();
-      setTimeout(connect, 5000);
+    ws.onerror = (event) => {
+      console.error("WebSocket error:", event);
+      setIsConnected(false);
+      setError(event);
+      setSocket(null);
+      setQrCodeData(null);
+      setAuthCode(null);
+      setConnectedDevices([]);
     };
+  }, [websocketURL, socket]);
 
-    setWs(newWs);
-  }, [url]);
+  const disconnect = useCallback(() => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.close();
+      setIsConnected(false);
+      console.log("WebSocket disconnect initiated by user.");
+    } else if (socket) {
+      console.log("WebSocket is not open, cannot disconnect.");
+    } else {
+      console.log("No WebSocket connection to disconnect.");
+    }
+  }, [socket]);
+
+  const sendMessage = useCallback(
+    (message: string) => {
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        console.log(message, "sending message");
+        socket.send(message);
+        console.log("WebSocket message sent:", message);
+      } else {
+        console.warn("WebSocket is not connected. Message not sent:", message);
+      }
+    },
+    [socket],
+  );
+
+  // New function to request auth code
+  const requestAuthCode = useCallback(() => {
+    if (isConnected) {
+      sendMessage(JSON.stringify({ type: "requestAuthCode" })); // Send a message to request auth code
+      console.log("Requesting auth code from server.");
+    } else {
+      console.warn("WebSocket is not connected. Cannot request auth code.");
+    }
+  }, [isConnected, sendMessage]);
 
   useEffect(() => {
-    connect();
+    console.log(window.location.hostname);
+    setTimeout(() => {
+      connect(); // Attempt reconnection after delay
+    }, 100);
+
     return () => {
-      if (ws) {
-        ws.close();
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.close();
       }
     };
   }, [connect]);
 
-  const sendMessage = useCallback(
-    (message: Message) => {
-      if (ws && isConnected) {
-        ws.send(JSON.stringify(message));
-      } else {
-        console.log("not connected");
-      }
-    },
-    [ws, isConnected],
-  );
-
-  const requestAuthCode = useCallback(() => {
-    sendMessage({ type: "requestAuthCode" });
-  }, [sendMessage]);
-
-  const removeDevice = useCallback(
-    (deviceId: string) => {
-      sendMessage({ type: "removeDevice", payload: deviceId });
-    },
-    [sendMessage],
-  );
-
-  const contextValue: WebSocketContextType = {
-    ws,
-    messages,
+  const contextValue: WebSocketContextValue = {
     sendMessage,
+    latestMessage,
     isConnected,
-    authCode,
-    qrCodeData,
-    requestAuthCode,
-    connectedDevices,
-    removeDevice,
+    error,
+    connect,
+    disconnect,
+    requestAuthCode, // Expose requestAuthCode function
+    qrCodeData, // Expose qrCodeData state
+    authCode, // Expose authCode state
+    connectedDevices, // Expose connectedDevices state
   };
 
   return (
@@ -162,8 +179,7 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
   );
 };
 
-// Custom hook to use WebSocket context
-export const useWebSocket = (): WebSocketContextType => {
+export const useWebSocket = (): WebSocketContextValue => {
   const context = useContext(WebSocketContext);
   if (!context) {
     throw new Error("useWebSocket must be used within a WebSocketProvider");
