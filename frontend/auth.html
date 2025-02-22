@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authentication</title>
+  </head>
+  <body>
+    <h1>Enter Authentication Code</h1>
+    <input type="text" id="authCode" maxlength="6" autofocus />
+    <div id="errorMessage" style="color: red"></div>
+    <script>
+      const authCodeInput = document.getElementById("authCode");
+      const errorMessage = document.getElementById("errorMessage");
+
+      authCodeInput.addEventListener("input", function () {
+        if (this.value.length === 6) {
+          sendAuthCode(this.value);
+        } else {
+          errorMessage.textContent = ""; // Clear any previous error message
+        }
+      });
+
+      function sendAuthCode(code) {
+        errorMessage.textContent = ""; // Clear any previous error message
+
+        fetch("/auth-code", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded", // Or 'application/json' if sending JSON
+          },
+          body: "authCode=" + code, // Or JSON.stringify({ authCode: code }) if sending JSON
+        })
+          .then((response) => {
+            if (response.ok) {
+              // Handle successful response (e.g., redirect, display message)
+              console.log("Authentication code sent successfully");
+              window.location.href = "/"; // Redirect to the root path "/"
+            } else {
+              // Handle error response (e.g., display error message)
+              console.error("Error sending authentication code");
+              return response.text().then((text) => {
+                // Get the error message from the server
+                errorMessage.textContent =
+                  text || "Incorrect or expired code. Please try again."; // Display server message or default
+                authCodeInput.value = ""; // Clear the input field
+              });
+            }
+          })
+          .catch((error) => {
+            console.error("Error sending authentication code:", error);
+            errorMessage.textContent =
+              "An error occurred. Please try again later.";
+            authCodeInput.value = ""; // Clear the input field
+          });
+      }
+    </script>
+  </body>
+</html>

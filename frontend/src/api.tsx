@@ -67,7 +67,7 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
     { id: string; name: string }[]
   >([]);
 
-  const url = `ws://${window.location.hostname}:3000`;
+  const url = `ws://${window.location.hostname}:3000/ws`;
   // const url = `ws://192.168.1.3:3000`;
 
   const connect = useCallback(() => {
