@@ -116,7 +116,12 @@ export function startServer(port: number, hostname: string) {
     hostname,
     fetch(req, server) {
       const url = new URL(req.url);
+      console.log("Incoming request:", req.method, url.pathname);
       const frontendDir = path.join(import.meta.dir, "../frontend/dist");
+      if (server.upgrade(req, { data: { deviceId: "" } })) {
+        console.log(" server upgrade");
+        return;
+      }
 
       // 1. Serve Static Assets (Correctly Handle Paths)
       if (url.pathname === "/" || url.pathname.startsWith("/assets/")) {
@@ -128,11 +133,9 @@ export function startServer(port: number, hostname: string) {
           return new Response(file);
         }
       }
+      // console.log("Attempting WebSocket upgrade..."); // Log BEFORE upgrade
 
       // 2. WebSocket Upgrade
-      if (server.upgrade(req, { data: { deviceId: "" } })) {
-        return;
-      }
 
       // 3. Authentication Check (BEFORE serving index.html)
       const cookies = req.headers.get("cookie");

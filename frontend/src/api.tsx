@@ -68,9 +68,11 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
   >([]);
 
   const url = `ws://${window.location.hostname}:3000`;
+  // const url = `ws://192.168.1.3:3000`;
 
   const connect = useCallback(() => {
     const newWs = new WebSocket(url);
+    console.log(newWs);
 
     newWs.onopen = () => {
       console.log("WebSocket connected");
