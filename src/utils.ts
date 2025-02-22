@@ -13,6 +13,7 @@ export async function sendQRCodeViaWebSocket(
   ws: any,
   url: string,
   otp: string,
+  clients: any,
 ) {
   //  ws type could be more specific if you have a WS type defined
 
@@ -21,12 +22,37 @@ export async function sendQRCodeViaWebSocket(
   try {
     const qrCodeDataURL = await QRCode.toDataURL(url);
     // Send the QR code data URL as a JSON message
+    //
+    //
+    clients.forEach((client: any) => {
+      if (client.readyState === WebSocket.OPEN) {
+        // Check if client is still connected
+
+        client.send(
+          JSON.stringify({ type: "qrCode", data: qrCodeDataURL, otp: otp }),
+        );
+      } else {
+        clients.delete(client); // Remove disconnected clients
+      }
+    });
+
     ws.send(JSON.stringify({ type: "qrCode", data: qrCodeDataURL, otp: otp }));
   } catch (err) {
     console.error("Failed to generate QR code:", err);
     // Send an error message via WebSocket
-    ws.send(
-      JSON.stringify({ type: "error", message: "Failed to generate QR code." }),
-    );
+    clients.forEach((client: any) => {
+      if (client.readyState === WebSocket.OPEN) {
+        // Check if client is still connected
+
+        client.send(
+          JSON.stringify({
+            type: "error",
+            message: "Failed to generate QR code.",
+          }),
+        );
+      } else {
+        clients.delete(client); // Remove disconnected clients
+      }
+    });
   }
 }

@@ -21,6 +21,7 @@ const requestLogger = () => (app: Elysia) =>
     const url = context.request.url; // Or context.url for pathname only
     // console.log(`[HTTP Request - ${timestamp}] ${method} ${url}`); // Log method and full URL
   });
+const clients = new Set();
 
 const app = new Elysia()
   .use(cookie())
@@ -55,6 +56,7 @@ const app = new Elysia()
 
     if (sessionId && authenticatedSessions.has(sessionId)) {
       console.log("qrlogin sucessful");
+      validOTP = null;
       // Set the cookie for the user
       context.cookie.sessionId.set({
         value: sessionId,
@@ -92,6 +94,7 @@ const app = new Elysia()
   })
   .ws("/ws", {
     open(ws) {
+      clients.add(ws);
       console.log("WebSocket connection opened");
       // You can perform actions on connection open if needed
     },
@@ -103,7 +106,7 @@ const app = new Elysia()
         authenticatedSessions.add(sessionId);
         const qrLoginUrl = `http://${Serverhostname}:${Serverport}/qr-login?session=${sessionId}`;
         validOTP = generateSecureRandomSixDigitNumber();
-        sendQRCodeViaWebSocket(ws, qrLoginUrl, validOTP);
+        sendQRCodeViaWebSocket(ws, qrLoginUrl, validOTP, clients);
       }
       // console.log(`Received message: ${message}`);
       // ws.send(`Server received: ${message}`); // Echo back the message
