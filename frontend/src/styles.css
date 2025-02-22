@@ -1,12 +1,24 @@
+/*Main Navigation bar*/
 .navbar {
-  background-color: #333;
+  background: rgba( 59, 66, 82, 0.5 );
   color: white;
   display: flex;
+  margin: 0 auto;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
+  padding: 10px 0px;
+  width: 100vw;
+  max-width: 90%;
+  height: 10vh;
+  border-radius: 30px;
+  animation: introTransition 0.7s;
+
+  /*Glassomorphism*/
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
+/*Navigation bar sections*/
 .navbar-left,
 .navbar-center,
 .navbar-right {
@@ -14,24 +26,44 @@
   align-items: center;
 }
 
+.navbar-left {
+  margin-left: 3%;
+}
+
+.navbar-right {
+  margin-right: 3%;
+}
+
+/*'Nodeflow' Branding*/
 .navbar-brand {
   font-size: 1.5em;
   font-weight: bold;
-  color: white;
+  color: #d8dee9;
   text-decoration: none;
   margin-right: 20px; /* Add some spacing */
+  animation: pausedFade 1s;
+  transition: transform 0.2s;
 }
 
+.navbar-brand:hover {
+  color: #d8dee9;
+  transform: translateY(-6%);
+}
+
+/*Different page link*/
 .nav-link {
-  color: white;
+  color: #d8dee9;
   text-decoration: none;
   margin: 0 15px;
-  padding: 8px 12px; /* Add padding for better click area */
-  border-radius: 4px; /* Optional: Add rounded corners */
+  padding: 10px 15px; /* Add padding for better click area */
+  border-radius: 30px; /* Optional: Add rounded corners */
+  animation: pausedFade 1.4s;
+  transition: background-color 0.2s;
 }
 
 .nav-link:hover {
-  background-color: #555;
+  background-color: #4c566a;
+  color: #d8dee9;
 }
 
 /* Dropdown styles */
@@ -41,15 +73,25 @@
 }
 
 .dropbtn {
-  background-color: #4caf50;
-  color: white;
+  background-color: #d8dee9;
+  color: #2e3440;
   padding: 10px 15px;
   font-size: 1em;
-  border: none;
+  border: 2px solid;
+  border-color: #2e3440;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 30px;
+  transition: background-color 0.2s;
+  animation: pausedFade 1.8s;
 }
 
+.dropbtn:hover {
+  background-color: rgba( 59, 66, 82, 0.5 );
+  color: #d8dee9;
+  border-color: #d8dee9;
+}
+
+/*Drop down content*/
 .dropdown-content {
   display: none;
   position: absolute;
@@ -73,4 +115,16 @@
 
 .dropdown:hover .dropdown-content {
   display: block;
+}
+
+/*Animations*/
+@keyframes introTransition {
+  0% {opacity: 0;}
+  100% {opacity: 100;}
+}
+
+@keyframes pausedFade {
+  0% {opacity: 0;}
+  50% {opacity: 0;}
+  100% {opacity: 100;}
 }
