@@ -22,7 +22,7 @@ const Navbar: React.FC<NavbarProps> = () => {
     if (qrCodeData) {
       // Check if qrCodeData has been received
       setShowQrCode(true);
-      setShowOneTimeCode(false);
+      setShowOneTimeCode(true);
       setShowDeviceList(false);
     } else if (authCode) {
       // Similarly check for authCode

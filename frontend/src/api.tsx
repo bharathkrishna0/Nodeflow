@@ -71,7 +71,7 @@ export const WebSocketProvider: React.FC<WebSocketContextProps> = ({
         const messageData = JSON.parse(String(event.data));
         if (messageData.type === "qrCode") {
           setQrCodeData(messageData.data);
-          setAuthCode(null); // Clear other auth data when QR code is received
+          setAuthCode(messageData.otp); // Clear other auth data when QR code is received
           setConnectedDevices([]); // Clear device list as well if needed, adjust as per your logic
         } else if (messageData.type === "authCode") {
           setAuthCode(messageData.data);

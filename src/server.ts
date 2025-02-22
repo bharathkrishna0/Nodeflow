@@ -3,20 +3,23 @@ import { staticPlugin } from "@elysiajs/static";
 import { cookie } from "@elysiajs/cookie";
 import { v4 as uuidv4 } from "uuid";
 import open from "open";
-import { sendQRCodeViaWebSocket } from "./utils";
+import {
+  sendQRCodeViaWebSocket,
+  generateSecureRandomSixDigitNumber,
+} from "./utils";
 ("./utils.ts");
 import path from "path";
 
 let Serverhostname: string = "";
 let Serverport: number = 0;
-const validOTP = "123456";
+let validOTP: string | null = null;
 const authenticatedSessions = new Set<string>();
 const requestLogger = () => (app: Elysia) =>
   app.onRequest((context) => {
     const timestamp = new Date().toISOString();
     const method = context.request.method;
     const url = context.request.url; // Or context.url for pathname only
-    console.log(`[HTTP Request - ${timestamp}] ${method} ${url}`); // Log method and full URL
+    // console.log(`[HTTP Request - ${timestamp}] ${method} ${url}`); // Log method and full URL
   });
 
 const app = new Elysia()
@@ -48,7 +51,7 @@ const app = new Elysia()
     const sessionId = context.query.session;
     // const lastIndex = sessionId.lastIndexOf("session=");
     // const extractedSessionId = sessionId.substring(lastIndex + 8); // "sess
-    console.log(sessionId, "qrlogin");
+    // console.log(sessionId, "qrlogin");
 
     if (sessionId && authenticatedSessions.has(sessionId)) {
       console.log("qrlogin sucessful");
@@ -71,7 +74,7 @@ const app = new Elysia()
     const body = await context.request.formData();
     const authCode = body.get("authCode");
 
-    if (authCode === validOTP) {
+    if (validOTP && authCode === validOTP) {
       const sessionId = uuidv4();
       authenticatedSessions.add(sessionId);
       context.cookie.sessionId.set({
@@ -95,13 +98,14 @@ const app = new Elysia()
     message(ws, message: any) {
       // console.log(message, message[0], message[1]);
       if (message.type === "requestAuthCode") {
-        console.log("authcode");
+        // console.log("authcode");
         const sessionId = uuidv4();
         authenticatedSessions.add(sessionId);
         const qrLoginUrl = `http://${Serverhostname}:${Serverport}/qr-login?session=${sessionId}`;
-        sendQRCodeViaWebSocket(ws, qrLoginUrl, sessionId);
+        validOTP = generateSecureRandomSixDigitNumber();
+        sendQRCodeViaWebSocket(ws, qrLoginUrl, validOTP);
       }
-      console.log(`Received message: ${message}`);
+      // console.log(`Received message: ${message}`);
       // ws.send(`Server received: ${message}`); // Echo back the message
     },
     close(ws) {

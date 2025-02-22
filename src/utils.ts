@@ -1,19 +1,18 @@
 import QRCode from "qrcode";
-// Function to generate and send the QR code data URL via WebSocket
-export function createAuthUrl(sessionId: string, url: string): string {
-  //  ws type could be more specific if you have a WS type defined
-  // authenticatedSessions.add(sessionId);
+export function generateSecureRandomSixDigitNumber(): string {
+  const crypto = require("crypto"); // Import the crypto module
 
-  const authUrl = `${url}/qr-login?session=${sessionId}`;
+  const randomNumber = crypto.randomInt(0, 1000000); // Generates a random int between 0 and 999999
 
-  // Send the QR code data URL as a JSON message
-  return authUrl;
+  const paddedNumber = randomNumber.toString().padStart(6, "0");
+
+  return paddedNumber;
 }
-// Function to generate and send the QR code data URL via WebSocket
+
 export async function sendQRCodeViaWebSocket(
   ws: any,
   url: string,
-  sessionId: string,
+  otp: string,
 ) {
   //  ws type could be more specific if you have a WS type defined
 
@@ -22,7 +21,7 @@ export async function sendQRCodeViaWebSocket(
   try {
     const qrCodeDataURL = await QRCode.toDataURL(url);
     // Send the QR code data URL as a JSON message
-    ws.send(JSON.stringify({ type: "qrCode", data: qrCodeDataURL }));
+    ws.send(JSON.stringify({ type: "qrCode", data: qrCodeDataURL, otp: otp }));
   } catch (err) {
     console.error("Failed to generate QR code:", err);
     // Send an error message via WebSocket
