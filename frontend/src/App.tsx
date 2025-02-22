@@ -6,6 +6,7 @@ import TextEditor from "./components/TextEditor"; // Journal
 import Todos from "./components/Todos";
 // import Auth from "./components/Auth";
 import Navbar from "./components/Navbar";
+import ChatInterface from "./components/chat";
 import { WebSocketProvider } from "./api";
 // import { AuthProvider } from "./authContext";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -25,6 +26,7 @@ function App() {
             {/* <Route path="/auth" element={<Auth />} /> */}
           </Routes>
         </Router>
+        <ChatInterface />
       </WebSocketProvider>
     </ThemeProvider>
   );

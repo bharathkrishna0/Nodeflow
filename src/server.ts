@@ -6,6 +6,7 @@ import open from "open";
 import {
   sendQRCodeViaWebSocket,
   generateSecureRandomSixDigitNumber,
+  SendToallWs,
 } from "./utils";
 ("./utils.ts");
 import path from "path";
@@ -34,7 +35,7 @@ const app = new Elysia()
   )
   .get("/", async (context) => {
     const sessionId = context.cookie.sessionId.value;
-    console.log(sessionId);
+    // console.log(sessionId);
     if (sessionId && authenticatedSessions.has(sessionId)) {
       // User is authenticated, serve index.html
       return Bun.file(path.resolve("./frontend/dist/index.html"));
@@ -99,7 +100,7 @@ const app = new Elysia()
       // You can perform actions on connection open if needed
     },
     message(ws, message: any) {
-      // console.log(message, message[0], message[1]);
+      console.log(message);
       if (message.type === "requestAuthCode") {
         // console.log("authcode");
         const sessionId = uuidv4();
@@ -107,6 +108,20 @@ const app = new Elysia()
         const qrLoginUrl = `http://${Serverhostname}:${Serverport}/qr-login?session=${sessionId}`;
         validOTP = generateSecureRandomSixDigitNumber();
         sendQRCodeViaWebSocket(ws, qrLoginUrl, validOTP, clients);
+      } else if (message.type === "chat") {
+        console.log("newmessage", message.data);
+
+        SendToallWs(clients, {
+          type: "recieve-chat",
+          data: { data: message.data, id: Date.now() },
+        });
+      } else if (message.type === "chat-file") {
+        console.log("newfile", message.data);
+
+        SendToallWs(clients, {
+          type: "recieve-chat-file",
+          data: { data: message.data, id: Date.now() },
+        });
       }
       // console.log(`Received message: ${message}`);
       // ws.send(`Server received: ${message}`); // Echo back the message

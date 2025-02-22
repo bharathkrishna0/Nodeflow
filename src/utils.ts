@@ -24,35 +24,25 @@ export async function sendQRCodeViaWebSocket(
     // Send the QR code data URL as a JSON message
     //
     //
-    clients.forEach((client: any) => {
-      if (client.readyState === WebSocket.OPEN) {
-        // Check if client is still connected
-
-        client.send(
-          JSON.stringify({ type: "qrCode", data: qrCodeDataURL, otp: otp }),
-        );
-      } else {
-        clients.delete(client); // Remove disconnected clients
-      }
-    });
-
-    ws.send(JSON.stringify({ type: "qrCode", data: qrCodeDataURL, otp: otp }));
+    SendToallWs(clients, { type: "qrCode", data: qrCodeDataURL, otp: otp });
   } catch (err) {
     console.error("Failed to generate QR code:", err);
     // Send an error message via WebSocket
-    clients.forEach((client: any) => {
-      if (client.readyState === WebSocket.OPEN) {
-        // Check if client is still connected
-
-        client.send(
-          JSON.stringify({
-            type: "error",
-            message: "Failed to generate QR code.",
-          }),
-        );
-      } else {
-        clients.delete(client); // Remove disconnected clients
-      }
+    SendToallWs(clients, {
+      type: "error",
+      message: "Failed to generate QR code.",
     });
   }
+}
+
+export function SendToallWs(clients: any, data: any) {
+  clients.forEach((client: any) => {
+    if (client.readyState === WebSocket.OPEN) {
+      // Check if client is still connected
+
+      client.send(JSON.stringify(data));
+    } else {
+      clients.delete(client); // Remove disconnected clients
+    }
+  });
 }
