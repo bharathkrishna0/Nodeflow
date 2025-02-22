@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../styles.css"; // Import the stylesheet
 import { useWebSocket } from "../api";
+import { ModeToggle } from "./mode-toggle.tsx"; // Import the ModeToggle component
 
 interface NavbarProps {} // No props for now
 
@@ -66,6 +67,7 @@ const Navbar: React.FC<NavbarProps> = () => {
         </Link>
       </div>
       <div className="navbar-right">
+        <ModeToggle />
         <div className="dropdown">
           <button className="dropbtn">Account</button>
           <div className="dropdown-content">

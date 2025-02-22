@@ -8,22 +8,25 @@ import Todos from "./components/Todos";
 import Navbar from "./components/Navbar";
 import { WebSocketProvider } from "./api";
 // import { AuthProvider } from "./authContext";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./styles.css";
 
 function App() {
   return (
-    <WebSocketProvider>
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/storage" element={<Storage />} />
-          <Route path="/journal" element={<TextEditor />} />
-          <Route path="/todos" element={<Todos />} />
-          {/* <Route path="/auth" element={<Auth />} /> */}
-        </Routes>
-      </Router>
-    </WebSocketProvider>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <WebSocketProvider>
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/storage" element={<Storage />} />
+            <Route path="/journal" element={<TextEditor />} />
+            <Route path="/todos" element={<Todos />} />
+            {/* <Route path="/auth" element={<Auth />} /> */}
+          </Routes>
+        </Router>
+      </WebSocketProvider>
+    </ThemeProvider>
   );
 }
 
