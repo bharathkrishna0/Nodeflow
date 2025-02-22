@@ -1,29 +1,39 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./components/Home";
-import Files from "./components/Files";
-import TextEditor from "./components/TextEditor";
-import Auth from "./components/Auth";
-import Navbar from "./components/Navbar";
-import { WebSocketProvider, useWebSocket } from "./api"; // WebSocket Context
-import { AuthProvider } from "./authContext";
+import React from "react";
+import { Link } from "react-router-dom";
+import "../styles.css"; // Import the stylesheet
 
-function App() {
+interface NavbarProps {} // No props for now
+
+const Navbar: React.FC<NavbarProps> = () => {
   return (
-    <AuthProvider>
-      <WebSocketProvider>
-        <Router>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/files" element={<Files />} />
-            <Route path="/text" element={<TextEditor />} />
-            <Route path="/auth" element={<Auth />} />
-          </Routes>
-        </Router>
-      </WebSocketProvider>
-    </AuthProvider>
+    <nav className="navbar">
+      <div className="navbar-left">
+        <Link to="/" className="navbar-brand">
+          Nodeflow
+        </Link>
+      </div>
+      <div className="navbar-center">
+        <Link to="/journal" className="nav-link">
+          Journal
+        </Link>
+        <Link to="/storage" className="nav-link">
+          Storage
+        </Link>{" "}
+        {/* Renamed Files to Storage */}
+        <Link to="/todos" className="nav-link">
+          Todos
+        </Link>
+      </div>
+      <div className="navbar-right">
+        <div className="dropdown">
+          <button className="dropbtn">Account</button>
+          <div className="dropdown-content">
+            {/* Dropdown items will go here later */}
+          </div>
+        </div>
+      </div>
+    </nav>
   );
-}
+};
 
-export default App;
+export default Navbar;
