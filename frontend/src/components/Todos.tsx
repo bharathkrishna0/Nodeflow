@@ -71,7 +71,7 @@ export default function TodoList() {
             onChange={(e) => setNewTask(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && addTask()}
           />
-          <Button onClick={addTask}>
+          <Button onClick={addTask} className="dark:bg-slate-500 ">
             <Plus className="h-4 w-4" />
             <span className="sr-only">Add task</span>
           </Button>

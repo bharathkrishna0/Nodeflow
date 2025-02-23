@@ -43,7 +43,7 @@
 .navbar-brand {
   font-size: 1.5em;
   font-weight: bold;
-  color: #d8dee9;
+  color: var(--foreground);
   text-decoration: none;
   margin-right: 20px; /* Add some spacing */
   animation: pausedFade 1s;
@@ -52,20 +52,19 @@
 }
 
 .navbar-brand:hover {
-  color: #d8dee9;
+  color: #e4e6e9;
   transform: translateY(-6%);
 }
 
 /*Different page link*/
 .nav-link {
-  color: #d8dee9;
+  color: var(--foreground);
   text-decoration: none;
   margin: 0 15px;
   padding: 10px 15px; /* Add padding for better click area */
   border-radius: 30px; /* Optional: Add rounded corners */
   animation: pausedFade 1.4s;
-  transition: background-color 0.2s;
-  font-family: funnel display;
+  background-color: var(--background);
 }
 
 .nav-link:hover {
@@ -131,6 +130,7 @@
 }
 
 #addDeviceButton {
+  background-color: #000000;
   color: #d8dee9;
   background-color: #4c566a;
   outline: none;
@@ -168,6 +168,9 @@
   100% {
     opacity: 100;
   }
+}.nav-link:hover:dark {
+  background-color: #2d3445;
+  color: #d8dee9;
 }
 
 @keyframes pausedFade {
@@ -214,9 +217,9 @@
   /*display: none;*/
 
   height: 500px;
-  background-color: #d8dee9;
+  background-color: white;
   outline: none;
-  border: 5px solid #2e3440;
+  border: 5px solid #4c566a;
   border-radius: 4px;
   transition: height 0.3s;
   overflow: hidden;
@@ -228,8 +231,8 @@
 }
 
 #messageSpace {
-  background: #2e3440;
-  box-shadow: 0px 0px 10px black;
+  background: var(--background);
+  box-shadow: 0px 0px 10px #000000;
   outline: none;
   border: none;
   border-radius: 10px;
@@ -242,7 +245,7 @@
   font-size: 1rem;
   border-radius: 5px;
   padding: 3px 3px;
-  color: #d8dee9;
+  color: var(--nord4);
 }
 #fileLabel:hover {
   text-decoration: underline;
@@ -252,9 +255,9 @@
   font-family: funnel display;
   border-radius: 10px;
   letter-spacing: 1px;
-  background-color: #d8dee9;
-  color: #2e3440;
-  caret-color: #2e3440;
+  background-color: var(--accent);
+  color: var(--foreground);
+  caret-color: var(--primary);
   padding: 5px 10px;
   margin: 0px 10px;
 }
@@ -264,29 +267,29 @@
 
 #sendButton {
   font-family: funnel display;
-  color: #2e3440;
-  background-color: #d8dee9;
+  color: var(--foreground);
+  background-color: var(--primary);
   font-size: 1rem;
   border-radius: 10px;
   transition: background-color 0.2s;
   border-width: 2px;
 }
 #sendButton:hover {
-  color: #d8dee9;
-  background-color: #2e3440;
-  border-color: #d8dee9;
+  color: var(--background);
+  background-color: var(--accent);
+  border-color: var(--foreground);
   border-width: 2px;
 }
 
 #sentMessage {
-  color: #2e3440;
+  color: var(--foreground);
   padding: 0px 10px;
   font-family: funnel display;
   text-decoration: underline;
 }
 
 #sentImage {
-  border: 2px solid #2e3440;
+  border: 2px solid var(--border);
   margin: 0px 10px;
 }
 
@@ -301,5 +304,5 @@
 }
 #collapse:hover {
   outline: none;
-  border: 2px solid #2e3440;
+  border: 2px solid var(--border);
 }
