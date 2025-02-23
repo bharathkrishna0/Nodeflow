@@ -1,0 +1,80 @@
+* {
+   padding: 0;
+   background-color: #e5e9f0;
+}
+/*Parent Div*/
+#parentDiv {
+    display: flex;
+    overflow: hidden;
+    margin: 0 0;
+    padding: 0 0;
+}
+
+/*Authentication message div*/
+#authmessagediv {
+    width: 50%;
+    padding-left: 5%;
+}
+/*Message class*/
+.message {
+    color: #2e3440;
+    font-family: Funnel Display;
+}
+
+/*Separate messages*/
+#sorrymsg {
+    font-size: 5rem;
+}
+
+#authmsg {
+    font-size: 2rem;
+}
+
+#branding {
+    font-size: 2rem;
+    font-family: Pacifico;
+}
+
+/*Input box*/
+#authCode {
+    width: 30vw;
+    height: 10vh;
+    font-size: 3rem;
+    font-weight: bold;
+    border: none;
+    border-bottom: solid 3px #2e3440;
+    letter-spacing: 50px;
+    color: #2e3440;
+    font-family: Funnel Display;
+}
+::placeholder {
+    opacity: 0.2;
+    color: #4c566a;
+    text-align: center;
+  }
+  
+  ::-ms-input-placeholder { 
+    opacity: 0.1;
+    color: #4c566a;
+  }
+
+#authCode:focus {
+    outline: none;
+}
+
+/*Error message*/
+#errorMessage {
+    padding: 2% 5%;
+    font-size: 1.2rem;
+    font-family: Funnel Display;
+}
+
+/*Image and image div*/
+#imagediv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#image {
+    width: 80%;
+}
