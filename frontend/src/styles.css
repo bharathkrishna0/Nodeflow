@@ -270,3 +270,14 @@
   border-color: #d8dee9;
   border-width: 2px;
 }
+
+#sentMessage {
+  color: #2e3440;
+  padding: 0px 10px;
+  font-family: funnel display;
+  text-decoration: underline;
+}
+
+#sentImage {
+  border: 2px solid #2e3440;
+}

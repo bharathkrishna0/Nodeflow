@@ -15,7 +15,7 @@ async function createMessageTag(message: {
           return <a href="/">{`${message.data} error retrieving file`}</a>; // Return JSX for error link
         }
         const imageUrl = URL.createObjectURL(imageBlob);
-        return <img src={imageUrl} alt={`Image: ${message.data}`} />; // Return JSX for image
+        return <img id="sentImage" src={imageUrl} alt={`Image: ${message.data}`} />; // Return JSX for image
       } catch (error) {
         console.error("Error getting image:", error);
         return <a href="/">{`${message.data} error retrieving file`}</a>; // JSX for error link
@@ -24,7 +24,7 @@ async function createMessageTag(message: {
       return <a href="/">{message.data}</a>; // JSX for generic link
     }
   } else {
-    return <span>{message.data}</span>; // JSX for text
+    return <span id="sentMessage">{message.data}</span>; // JSX for text
   }
 }
 import "../styles.css"; //Importing stylesheet
