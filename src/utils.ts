@@ -1,4 +1,8 @@
 import QRCode from "qrcode";
+
+import fs from "fs";
+import path from "path";
+
 export function generateSecureRandomSixDigitNumber(): string {
   const crypto = require("crypto"); // Import the crypto module
 
@@ -44,5 +48,31 @@ export function SendToallWs(clients: any, data: any) {
     } else {
       clients.delete(client); // Remove disconnected clients
     }
+  });
+}
+
+function saveDataToFile(message: {
+  name: string;
+  data: string;
+}): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    if (!message.name) {
+      reject(new Error("Message name is missing!"));
+      return;
+    }
+
+    const filename = `${message.name}.txt`;
+    const filePath = path.join(__dirname, "data", filename);
+
+    fs.mkdirSync(path.join(__dirname, "data"), { recursive: true });
+
+    fs.writeFile(filePath, message.data, { encoding: "utf8" }, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        console.log(`Data saved to ${filePath}`);
+        resolve();
+      }
+    });
   });
 }

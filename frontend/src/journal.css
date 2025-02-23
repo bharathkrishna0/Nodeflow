@@ -1,96 +1,103 @@
 ::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 #parentContainer {
-    display: flex;
-    margin-top: 5%;
-    background-color: #434c5e;
+  display: flex;
+  margin-top: 5%;
+  background-color: #434c5e;
 }
 
 #displayDiv {
-    height: 70vh;
-    width: 30vw;
-    background-color: #434c5e;
+  height: 70vh;
+  width: 30vw;
+  background-color: #434c5e;
 }
 
 #textDiv {
-    height: 70vh;
-    width: 70vw;
-    border-radius: 10px;
-    background-color: #2e3440;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.500);
+  height: 70vh;
+  width: 70vw;
+  border-radius: 10px;
+  background-color: #2e3440;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 #optionsDiv {
-    justify-content: center;
-    align-items: center;
-    display: flex;
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }
 #optionsList {
-    display: flex;
-    font-family: funnel display;
-    color: #d8dee9;
-    padding-left: 3%;
+  display: flex;
+  font-family: funnel display;
+  color: #d8dee9;
+  padding-left: 3%;
 }
 
-
-.fileButton{
-    color: #d8dee9;
-    padding: 10px 1%;
-    opacity: 0.5;
-    transition: opacity 0.2s;
-    font-size: 0.8rem;
-    animation: fade 2s;
+.fileButton {
+  color: #d8dee9;
+  padding: 10px 1%;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  font-size: 0.8rem;
+  animation: fade 2s;
 }
 
-.fileButton:hover{
-    color: #d8dee9;
-    opacity: 1;
-    cursor: pointer;
+.fileButton:hover {
+  color: #d8dee9;
+  opacity: 1;
+  cursor: pointer;
 }
 #typingDiv {
-    justify-content: center;
-    align-items: center;
+  justify-content: center;
+  align-items: space-between;
 }
 
 #typingSpace {
-    width: 100%;
-    height: 100%;
-    max-width: 70vw;
-    max-height: 64vh;
-    position: absolute;
-    background-color: transparent;
-    font-family: funnel display;
-    letter-spacing: 2px;
-    padding: 10px 20px;
-    outline: none;
-    resize: none;
-    color: #d8dee9;
-    font-size: 1rem;
+  width: 50%;
+  height: 100%;
+  max-width: 70vw;
+  max-height: 64vh;
+  position: absolute;
+  background-color: transparent;
+  font-family: funnel display;
+  letter-spacing: 2px;
+  padding: 10px 20px;
+  outline: none;
+  resize: none;
+  color: #d8dee9;
+  font-size: 1rem;
 }
 
 #typingSpace:focus {
-    border: none;
-    outline: none;
+  border: none;
+  outline: none;
 }
 
 /*THIS IS THE THE MARKDOWN DIV*/
 #previewDiv {
-    width: 100%;
-    height: 100%;
-    max-width: 70vw;
-    max-height: 64vh;
-    background-color: #2e3440;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    position: absolute;
-    display: none;
+  width: 50%;
+  height: 100%;
+  max-width: 70vw;
+  max-height: 64vh;
+  padding: 10px;
+  background-color: #2e3440;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  /* position: absolute; */
+  /* display: none; */
 }
 
 @keyframes fade {
-    0% {opacity: 0;}
-    50% {opacity: 0;}
-    100% {opacity: 50%;}
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 50%;
+  }
 }
+

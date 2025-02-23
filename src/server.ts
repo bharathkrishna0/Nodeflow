@@ -122,7 +122,15 @@ const app = new Elysia()
           type: "recieve-chat-file",
           data: { data: message.data, id: Date.now() },
         });
+      } else if (message.type === "contentUpdate") {
+        console.log("new text", message.data);
+
+        SendToallWs(clients, {
+          type: "contentUpdate",
+          data: { data: message.data },
+        });
       }
+
       // console.log(`Received message: ${message}`);
       // ws.send(`Server received: ${message}`); // Echo back the message
     },
