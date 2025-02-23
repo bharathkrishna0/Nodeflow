@@ -78,7 +78,7 @@ export default function TodoList() {
         </div>
         <div className="space-y-3">
           {tasks.map((task) => (
-            <div key={task.id} className="flex items-center gap-3">k
+            <div key={task.id} className="flex items-center gap-3">
               <Checkbox id={`task-${task.id}`} checked={task.completed} onCheckedChange={() => toggleTask(task.id)} />
               <label
                 htmlFor={`task-${task.id}`}
