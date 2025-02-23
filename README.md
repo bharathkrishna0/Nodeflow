@@ -1,89 +1,62 @@
-# Nodeflow
-Project Title: NodeFlow: A Local Network Personal Management System
+## NodeFlow, Simple & Open Source Notion Alternative
 
-1. Introduction:
-
-NodeFlow is a web-based personal management tool designed to streamline and centralize daily activities within a local network environment. Addressing the growing need for secure, privacy-focused, and accessible personal organization, NodeFlow empowers users to manage scheduling, finances, sleep patterns, workouts, gardening logs, journaling, habits, file sharing, and even basic communication across multiple devices – all without relying on external cloud services or internet connectivity. The application leverages a lightweight, server-client architecture, allowing users to maintain control and ownership of their personal data. The name "NodeFlow" reflects the system's networked nature and the smooth flow of information between devices.
-
-2. Problem Statement:
-
-Individuals often rely on a multitude of disparate applications and platforms to manage various aspects of their lives. This fragmented approach leads to inefficiency, data silos, and concerns about data privacy and security, particularly with cloud-based solutions. Existing local network solutions may lack the comprehensive feature set and user-friendly interface required for widespread adoption.
-
-3. Proposed Solution:
-
-NodeFlow offers a unified, locally hosted solution for managing key areas of personal life. By operating entirely within a user's local network, NodeFlow eliminates reliance on internet connectivity and external data storage, enhancing privacy and security. The web-based interface provides a consistent and intuitive experience across various devices, while a simplified command-line interface streamlines server management.
-
-4. Key Features & Functionality:
-
-Centralized Local Hosting: A single designated device acts as the NodeFlow server. This server, initiated through a simple command-line interface, hosts the web application and provides access to all features for devices on the same local network. This allows users to manage their data in a centralized location, without requiring third-party services.
-
-Web-Based Interface: All of NodeFlow's features are accessed through a responsive and user-friendly web interface, rendered on a web browser. This eliminates the need for device-specific applications and ensures cross-platform compatibility. The command-line interface is relegated to server startup and basic administrative tasks, simplifying the overall user experience.
-
-Multi-Purpose Tracking: NodeFlow integrates a comprehensive suite of management tools, including:
-
-Scheduling & Calendaring: Plan and track appointments, events, and deadlines.
-
-Financial Management: Record income, expenses, and budget information.
-
-Sleep Tracking: Log sleep duration and patterns.
-
-Workout Logging: Track exercise routines and progress.
-
-Gardening Log: Maintain records of plant growth, watering schedules, and harvest yields.
-
-Journaling: Record daily thoughts and experiences.
-
-Habit Tracking: Monitor progress towards achieving personal goals and breaking unwanted habits.
-
-Offline-First Design: NodeFlow operates entirely within the local network, eliminating the need for internet access for its core functionalities. Data is stored locally on the server device, ensuring continuous availability even without an internet connection.
-
-Local File Sharing: Facilitates secure and convenient file transfers between devices connected to the local network. Users can easily share documents, images, and other files without relying on external file-sharing services.
-
-Local Texting/Chat: Enables secure and private communication between devices within the local network. Users can exchange text messages without the need for external messaging platforms, enhancing privacy and control.
-
-Quick Setup & Lightweight Footprint: NodeFlow is designed for ease of use, requiring minimal configuration. The lightweight architecture ensures efficient performance on a variety of devices, even those with limited resources.
+NodeFlow is a locally-hosted web application that centralizes personal management tasks like scheduling, finances, and file sharing, enhancing privacy and control without relying on the internet.
 
 
-6. Target Audience:
+![ Screenshot](docs/authentication.png)
 
-The target audience for NodeFlow includes:
+### ✨ Features
+ NodeFlow is a comprehensive, locally-hosted personal management system.
 
-Individuals concerned about data privacy and security.
+* Centralized dashboard for scheduling, finances, sleep tracking, workouts, and more.
 
-Users who prefer local network solutions over cloud-based services.
+* Secure local file sharing and texting for enhanced privacy and control within your network.
 
-Tech-savvy individuals who appreciate a lightweight and customizable solution.
+* Offline-first design ensures continuous access to your data, even without an internet connection.
 
-Users who want a centralized platform for managing various aspects of their personal lives.
+* Lightweight and customizable for efficient performance on a variety of devices.
 
-People who require file sharing and texting on local network.
 
-7. Potential Benefits:
+## Tech Stack
 
-Enhanced Data Privacy and Security
+### Frontend
 
-Increased Control over Personal Data
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+### Backend
 
-Improved Efficiency and Productivity
+![Node.js](https://img.shields.io/badge/Node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+![BUN](https://img.shields.io/badge/Bun-FDF0D5?style=for-the-badge&logo=bun&logoColor=black)
 
-Reduced Reliance on Internet Connectivity
+##  To Get Started
 
-Streamlined Personal Management
+#### 1. Clone the Repository
 
-Customizable and Extensible
+```bash
+git clone https://github.com/bharathkrishna0/Nodeflow.git
 
-Simplified File Sharing and Texting
+```
+#### 2. Setup Frontend 
 
-8. Project Timeline:
+```bash
+cd frontend # Or the directory where your frontend code is located
+bun install   # Install frontend dependencies (if not already done)
+bun run dev     # Start the Vite development server. You may need to check the `package.json` to ensure that there is a `dev` file
 
-[Provide a realistic timeline with key milestones, such as:]
+```
 
-Phase 1: Core Feature Implementation (Scheduling, Financial Management) - [Start Date] - [End Date]
 
-Phase 2: Additional Feature Integration (Sleep Tracking, Workout Logging, etc.) - [Start Date] - [End Date]
+## Demo link:
 
-Phase 3: File Sharing & Texting Implementation - [Start Date] - [End Date]
 
-Phase 4: Testing and Refinement - [Start Date] - [End Date]
+### Roadmap
 
-Phase 5: Documentation and Release - [Start Date] - [End Date]
+* AI-Powered System Intergration
+* NodeFlow Platform: For developers to build and share custom modules
+* Collaborative Task Lists: Enable multiple users on the local network 
+
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
