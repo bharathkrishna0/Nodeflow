@@ -184,3 +184,85 @@
     transform: translateY(0%);
   }
 }
+
+
+/*Styles for the chat starts here*/
+#parentMessageContainer {
+  position: absolute;
+  margin: 1% 1%;
+  z-index: 1;
+  bottom: 0;
+  left: 0;
+  outline: none;
+  border: none;
+
+  animation: pausedFade 2s;
+}
+
+#messageContainer {
+  outline: none;
+  border: none;
+}
+
+/*Display Box*/
+#messageDisplay {
+
+  /*display: none;*/
+
+  background-color: #d8dee9;
+  outline: none;
+  border: 5px solid #2e3440;
+  border-radius: 4px;
+}
+
+#messageSpace {
+  background: rgba(59, 66, 82, 0.5);
+  box-shadow: 0px 0px 10px black;
+  outline: none;
+  border: none;
+  border-radius: 10px;
+
+  /*Glassomorphism*/
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#fileLabel {
+  font-family: funnel display;
+  font-size: 1rem;
+  border-radius: 5px;
+  padding: 3px 3px;
+  color: #d8dee9;
+}
+#fileLabel:hover {
+ text-decoration: underline;
+}
+
+
+#messageBox {
+  font-family: funnel display;
+  border-radius: 10px;
+  letter-spacing: 1px;
+  background-color: #d8dee9;
+  color: #2e3440;
+  caret-color: #2e3440;
+}
+#messageBox:focus {
+  outline: none;
+}
+
+#sendButton {
+  font-family: funnel display;
+  color: #2e3440;
+  background-color: #d8dee9;
+  font-size: 1rem;
+  border-radius: 10px;
+  transition: background-color 0.2s;
+  border-width: 2px;
+}
+#sendButton:hover {
+  color: #d8dee9;
+  background-color: #2e3440;
+  border-color: #d8dee9;
+  border-width: 2px;
+}
