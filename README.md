@@ -25,6 +25,7 @@ NodeFlow is a comprehensive, locally-hosted personal management system.
 
 - # Lightweight and customizable for efficient performance on a variety of devices.
   ![ Image](docs/home.png)
+  ![ Screenshot](docs/chat.png)
 
 ## Tech Stack
 
@@ -70,6 +71,7 @@ bun run dev    # build the frontend code
 ```
 
 ## Demo link:
+https://drive.google.com/drive/folders/1aEhL5zftN20UiFuGlpvTRNyPnx2Ih_3Y?usp=sharing
 
 ### Roadmap
 
