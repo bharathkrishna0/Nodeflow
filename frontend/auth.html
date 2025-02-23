@@ -4,33 +4,123 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Authentication</title>
-    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="auth.css" />
 
     <!--Google Fonts tag-->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        padding: 0;
+        background-color: #e5e9f0;
+      }
+      /*Parent Div*/
+      #parentDiv {
+        display: flex;
+        overflow: hidden;
+        margin: 0 0;
+        padding: 0 0;
+      }
+
+      /*Authentication message div*/
+      #authmessagediv {
+        width: 50%;
+        padding-left: 5%;
+      }
+      /*Message class*/
+      .message {
+        color: #2e3440;
+        font-family: Funnel Display;
+      }
+
+      /*Separate messages*/
+      #sorrymsg {
+        font-size: 5rem;
+      }
+
+      #authmsg {
+        font-size: 2rem;
+      }
+
+      #branding {
+        font-size: 2rem;
+        font-family: Pacifico;
+      }
+
+      /*Input box*/
+      #authCode {
+        width: 30vw;
+        height: 10vh;
+        font-size: 3rem;
+        font-weight: bold;
+        border: none;
+        border-bottom: solid 3px #2e3440;
+        letter-spacing: 50px;
+        color: #2e3440;
+        font-family: Funnel Display;
+      }
+      ::placeholder {
+        opacity: 0.2;
+        color: #4c566a;
+        text-align: center;
+      }
+
+      ::-ms-input-placeholder {
+        opacity: 0.1;
+        color: #4c566a;
+      }
+
+      #authCode:focus {
+        outline: none;
+      }
+
+      /*Error message*/
+      #errorMessage {
+        padding: 2% 5%;
+        font-size: 1.2rem;
+        font-family: Funnel Display;
+      }
+
+      /*Image and image div*/
+      #imagediv {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #image {
+        width: 80%;
+      }
+    </style>
   </head>
   <body>
-
     <!--Content-->
     <div id="parentDiv">
-
       <div id="authmessagediv">
         <h4 id="branding" class="message">Nodeflow</h4>
-        <h1 id="sorrymsg" class="message">Sorry! It seems like you've been locked out!</h1>
-        <h3 id="authmsg" class="message">Enter the authentication code to continue</h3>
-        <input type="text"placeholder="XXXXXX" id="authCode" maxlength="6" autofocus />
-       
+        <h1 id="sorrymsg" class="message">
+          Sorry! It seems like you've been locked out!
+        </h1>
+        <h3 id="authmsg" class="message">
+          Enter the authentication code to continue
+        </h3>
+        <input
+          type="text"
+          placeholder="XXXXXX"
+          id="authCode"
+          maxlength="6"
+          autofocus
+        />
       </div>
 
       <div id="imagediv">
-        <img id="image" src="private-data.svg">
+        <img id="image" src="private-data.svg" />
       </div>
-
     </div>
     <div id="errorMessage" style="color: #cc0000"></div>
-
 
     <!--Script-->
     <script>
@@ -81,3 +171,4 @@
     </script>
   </body>
 </html>
+
