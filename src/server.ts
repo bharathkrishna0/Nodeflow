@@ -77,11 +77,12 @@ const app = new Elysia()
   .post("/sendfile", async (context) => {
     const body = await context.request.formData();
     const filename = body.get("filename") as string;
+    const type = body.get("type") as string;
     console.log(filename);
 
     if (filename) {
-      const text = body.get("text") as string;
-      return saveDataToFile(filename, text);
+      const data = body.get("data") as string;
+      return saveDataToFile(filename, data, type);
     } else {
       return new Response("saving file failed", { status: 401 }); // Unauthorized
     }

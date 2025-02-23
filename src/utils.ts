@@ -54,10 +54,14 @@ export function SendToallWs(clients: any, data: any) {
 export async function saveDataToFile(
   filename: string,
   body: string,
+  type: string,
 ): Promise<Response> {
-  const fullfilename = `${filename}.txt`;
-  const dataDir = path.join(process.cwd(), "data"); // Use process.cwd() for better reliability
-  const filePath = path.join(dataDir, fullfilename);
+  let dataDir = path.join(process.cwd(), "data"); // Use process.cwd() for better reliability
+  if (type === "file") {
+    dataDir = path.join(dataDir, "file"); // Use process.cwd() for better reliability
+  }
+
+  const filePath = path.join(dataDir, filename);
 
   try {
     await fs.promises.mkdir(dataDir, { recursive: true });
