@@ -104,7 +104,7 @@ const TextEditor: React.FC = () => {
               placeholder="Go crazy here . . ."
               onChange={handleInputChange}
               ref={typingSpaceRef}
-              // style={{ display: isPreviewMode ? "block" : "block" }}
+              style={{ display: isPreviewMode ? "none" : "block" }}
             ></textarea>
           </div>
 
