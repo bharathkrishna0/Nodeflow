@@ -11,7 +11,6 @@ import {
   serveFile,
   appendToHistoryCSV,
   readFromHistoryCSV,
-  getFilePaths,
 } from "./utils";
 ("./utils.ts");
 import path from "path";
@@ -52,11 +51,6 @@ const app = new Elysia()
     const data = await readFromHistoryCSV();
     return data; // Elysia automatically serializes the returned data to JSON
   })
-  .get("/getfilepath", async () => {
-    const filepaths = getFilePaths();
-    return filepaths;
-  })
-
   .get("/receivefile", async ({ query }) => {
     const filename = query.filename;
     return serveFile(filename || ""); // Call the separate function
@@ -95,10 +89,6 @@ const app = new Elysia()
     const filename = body.get("filename") as string;
     const type = body.get("type") as string;
     console.log(filename);
-    SendToallWs(clients, {
-      type: "recieve-file",
-      data: { type: "text", data: message.data, id: Date.now() },
-    });
 
     if (filename) {
       if (type === "text") {

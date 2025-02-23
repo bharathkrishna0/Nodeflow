@@ -4,6 +4,15 @@ NodeFlow is a locally-hosted web application that centralizes personal managemen
 
 ![ Screenshot](docs/authentication.png)
 
+## Table of Contents
+
+1. [ Features](#features)
+2. [Tech Stack](#tech-stack)
+3. [Getting Started](#to-get-started)
+
+4. [Demo ](#demo-link)
+5. [Future Developments](#future-developments)
+
 ### ✨ Features
 
 NodeFlow is a comprehensive, locally-hosted personal management system.
@@ -14,7 +23,8 @@ NodeFlow is a comprehensive, locally-hosted personal management system.
 
 - Offline-first design ensures continuous access to your data, even without an internet connection.
 
-- Lightweight and customizable for efficient performance on a variety of devices.
+- # Lightweight and customizable for efficient performance on a variety of devices.
+  ![ Image](docs/home.png)
 
 ## Tech Stack
 
@@ -27,8 +37,13 @@ NodeFlow is a comprehensive, locally-hosted personal management system.
 ### Backend
 
 ![BUN](https://img.shields.io/badge/Bun-FDF0D5?style=for-the-badge&logo=bun&logoColor=black)
+![Elysia.js](https://img.shields.io/badge/Elysia.js-6DA55F?style=for-the-badge)
 
 ## To Get Started
+
+### Prerequisites
+
+- bun
 
 #### 1. Clone the Repository
 
@@ -58,10 +73,26 @@ bun run dev    # build the frontend code
 
 ### Roadmap
 
-- AI-Powered System Intergration
+### Future Developments
+
 - NodeFlow Platform: For developers to build and share custom modules
 - Collaborative Task Lists: Enable multiple users on the local network
 
+## Project Structure
+
+The project is organized into several key directories and files:
+
+### Key Directories and Files
+
+![Alt text](docs/workflow.png)
+
+### Contributing
+
+We welcome contributions to improve NodeFlow!
+
+If you'd like to contribute, please read the contributing guide here : [Contributing.md](https://github.com/bharathkrishna0/Nodeflow/main/Contributing.md)
+and follow the [Code_of_conduct.md](https://github.com/bharathkrishna0/Nodeflow/main/Code_of_conduct.md)
+
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+# This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
