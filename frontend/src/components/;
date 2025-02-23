@@ -63,7 +63,7 @@ export const WebSocketProvider: React.FC<WebSocketContextProps> = ({
 
     ws.onmessage = (event) => {
       console.log("WebSocket message received:", event.data);
-      setLatestMessage(String(event.data));
+      setLatestMessage(JSON.parse(String(event.data)));
       setError(null);
 
       // **Parse incoming messages and update state based on message type**
@@ -81,6 +81,7 @@ export const WebSocketProvider: React.FC<WebSocketContextProps> = ({
           setConnectedDevices(messageData.devices); // Assuming data is an array of device IDs
           setQrCodeData(null); // Clear other auth data
           setAuthCode(null);
+        } else if (messageData.type === "chat-recieve") {
         }
         // Add more message type handling as needed for your application
       } catch (e) {

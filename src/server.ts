@@ -1,208 +1,152 @@
-// src/server.ts
-import { serve } from "bun";
-import type { ServerWebSocket } from "bun";
-import * as path from "path";
-import { parse } from "url";
-import fs from "fs";
+import { Elysia } from "elysia";
+import { staticPlugin } from "@elysiajs/static";
+import { cookie } from "@elysiajs/cookie";
+import { v4 as uuidv4 } from "uuid";
+import open from "open";
+import {
+  sendQRCodeViaWebSocket,
+  generateSecureRandomSixDigitNumber,
+  SendToallWs,
+} from "./utils";
+("./utils.ts");
+import path from "path";
 
-const frontendDir = path.join(import.meta.dir, "../frontend/dist");
+let Serverhostname: string = "";
+let Serverport: number = 0;
+let validOTP: string | null = null;
+const authenticatedSessions = new Set<string>();
+const requestLogger = () => (app: Elysia) =>
+  app.onRequest((context) => {
+    const timestamp = new Date().toISOString();
+    const method = context.request.method;
+    const url = context.request.url; // Or context.url for pathname only
+    // console.log(`[HTTP Request - ${timestamp}] ${method} ${url}`); // Log method and full URL
+  });
+const clients = new Set();
 
-// --- Define the type for ws.data ---
-interface MyWebSocketData {
-  deviceId: string;
-}
-
-// --- Authentication and Device Management ---
-// Use the defined type in connectedDevices
-let connectedDevices: {
-  id: string;
-  ws: ServerWebSocket<MyWebSocketData>;
-  name: string;
-}[] = [];
-let authCode: string | null = null;
-let webSocketServer: ReturnType<typeof serve> | null = null; // Store the server instance
-
-const generateAuthCode = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-};
-
-const getLocalIpAddress = () => {
-  const interfaces = require("os").networkInterfaces();
-  for (const interfaceName in interfaces) {
-    const iface = interfaces[interfaceName];
-    for (const alias of iface) {
-      if (alias.family === "IPv4" && !alias.internal) {
-        return alias.address;
-      }
+const app = new Elysia()
+  .use(cookie())
+  .use(requestLogger())
+  .use(
+    staticPlugin({
+      assets: path.resolve("./frontend/dist"),
+      prefix: "/", // Serve static files from root, adjust prefix if needed
+    }),
+  )
+  .get("/", async (context) => {
+    const sessionId = context.cookie.sessionId.value;
+    // console.log(sessionId);
+    if (sessionId && authenticatedSessions.has(sessionId)) {
+      // User is authenticated, serve index.html
+      return Bun.file(path.resolve("./frontend/dist/index.html"));
+    } else {
+      // Not authenticated, redirect to auth.html
+      return context.redirect("./auth");
     }
-  }
-  return "localhost";
-};
+  })
+  .get("/auth", async () => {
+    return Bun.file(path.resolve("./frontend/auth.html"));
+    // return Bun.file("./auth.html");
+  })
+  .get("/qr-login", async (context) => {
+    // Extract the session ID from the query parameters
+    const sessionId = context.query.session;
+    // const lastIndex = sessionId.lastIndexOf("session=");
+    // const extractedSessionId = sessionId.substring(lastIndex + 8); // "sess
+    // console.log(sessionId, "qrlogin");
 
-// --- Helper Functions ---
+    if (sessionId && authenticatedSessions.has(sessionId)) {
+      console.log("qrlogin sucessful");
+      validOTP = null;
+      // Set the cookie for the user
+      context.cookie.sessionId.set({
+        value: sessionId,
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 7,
+        // sameSite: "strict",
+        path: "/",
+      });
 
-function checkAuth(cookies: string | null): boolean {
-  if (!cookies) {
-    return false;
-  }
+      // Redirect user to the index page
+      return context.redirect("/");
+    } else {
+      return new Response("Invalid or expired session.", { status: 401 });
+    }
+  })
+  .post("/auth-code", async (context) => {
+    const body = await context.request.formData();
+    const authCode = body.get("authCode");
 
-  const parsedCookies: { [key: string]: string | undefined } = cookies
-    .split(";")
-    .reduce((acc: { [key: string]: string | undefined }, cookie) => {
-      const [key, value] = cookie.trim().split("=");
-      if (key) {
-        // Ensure the key exists
-        acc[key] = value;
-      }
-      return acc;
-    }, {});
+    if (validOTP && authCode === validOTP) {
+      const sessionId = uuidv4();
+      authenticatedSessions.add(sessionId);
+      context.cookie.sessionId.set({
+        value: sessionId,
+        httpOnly: true, // Recommended for security
+        maxAge: 60 * 60 * 24 * 7, // 7 days session expiry
+        sameSite: "strict", // Recommended for security
+        path: "/",
+      });
 
-  const deviceId = parsedCookies["deviceId"];
-  // Check if deviceId is defined AND is a string
-  return (
-    typeof deviceId === "string" &&
-    connectedDevices.some((device) => device.id === deviceId)
-  );
-}
-
-function updateConnectedDevices() {
-  // Removed ws parameter
-  const devicesData = connectedDevices.map((device) => ({
-    id: device.id,
-    name: device.name, // Make sure you have a 'name' property
-  }));
-  if (webSocketServer) {
-    webSocketServer.publish(
-      "room",
-      JSON.stringify({
-        type: "devicesUpdate",
-        payload: devicesData,
-      }),
-    );
-  }
-}
-
-function handleRemoveDevice(deviceId: string) {
-  removeDeviceFromList(deviceId);
-}
-function removeDeviceFromList(deviceId: string) {
-  connectedDevices = connectedDevices.filter(
-    (device) => device.id !== deviceId,
-  );
-  updateConnectedDevices(); // Update all clients
-}
-// --- WebSocket Message Handlers ---
-
-function handleAuthCodeRequest(ws: ServerWebSocket<MyWebSocketData>) {
-  authCode = generateAuthCode();
-  const ipAddress = getLocalIpAddress();
-  const qrCodeData = `http://${ipAddress}:${webSocketServer?.port}/auth?code=${authCode}`;
-
-  if (webSocketServer) {
-    webSocketServer.publish(
-      "room",
-      JSON.stringify({
-        type: "authCode",
-        payload: { code: authCode, qrCode: qrCodeData },
-      }),
-    );
-  }
-  updateConnectedDevices(); // Update device list after generating code
-}
-
-export function startServer(port: number, hostname: string) {
-  const server = serve({
-    port,
-    hostname,
-    fetch(req, server) {
-      const url = new URL(req.url);
-      console.log("Incoming request:", req.method, url.pathname);
-      const frontendDir = path.join(import.meta.dir, "../frontend/dist");
-      if (server.upgrade(req, { data: { deviceId: "" } })) {
-        console.log(" server upgrade");
-        return;
-      }
-
-      // 1. Serve Static Assets (Correctly Handle Paths)
-      if (url.pathname === "/" || url.pathname.startsWith("/assets/")) {
-        let filePath = url.pathname === "/" ? "index.html" : url.pathname;
-        const fullPath = path.join(frontendDir, filePath);
-
-        if (fs.existsSync(fullPath)) {
-          const file = Bun.file(fullPath);
-          return new Response(file);
-        }
-      }
-      // console.log("Attempting WebSocket upgrade..."); // Log BEFORE upgrade
-
-      // 2. WebSocket Upgrade
-
-      // 3. Authentication Check (BEFORE serving index.html)
-      const cookies = req.headers.get("cookie");
-      const isAuthenticated = checkAuth(cookies);
-      if (!isAuthenticated && url.pathname !== "/auth") {
-        return Response.redirect(`${url.origin}/auth`, 302);
-      }
-
-      // 4. Fallback to index.html for SPA Routing
-      const indexFilePath = path.join(frontendDir, "index.html");
-      if (fs.existsSync(indexFilePath)) {
-        const indexFile = Bun.file(indexFilePath);
-        return new Response(indexFile, {
-          headers: {
-            "Content-Type": "text/html",
-          },
-        });
-      } else {
-        return new Response("index.html not found", { status: 500 });
-      }
+      return new Response(null, { status: 200 }); // Success
+    } else {
+      return new Response("Invalid authentication code.", { status: 401 }); // Unauthorized
+    }
+  })
+  .ws("/ws", {
+    open(ws) {
+      clients.add(ws);
+      console.log("WebSocket connection opened");
+      // You can perform actions on connection open if needed
     },
-    websocket: {
-      open(ws: ServerWebSocket<MyWebSocketData>) {
-        // Use the defined type here
-        console.log("Client connected");
-        ws.subscribe("room");
+    message(ws, message: any) {
+      console.log(message);
+      if (message.type === "requestAuthCode") {
+        // console.log("authcode");
+        const sessionId = uuidv4();
+        authenticatedSessions.add(sessionId);
+        const qrLoginUrl = `http://${Serverhostname}:${Serverport}/qr-login?session=${sessionId}`;
+        validOTP = generateSecureRandomSixDigitNumber();
+        sendQRCodeViaWebSocket(ws, qrLoginUrl, validOTP, clients);
+      } else if (message.type === "chat") {
+        console.log("newmessage", message.data);
 
-        // Assign a unique ID to the device
-        const deviceId = crypto.randomUUID();
-        ws.data.deviceId = deviceId; // Now this is valid
-        connectedDevices.push({
-          id: deviceId,
-          ws,
-          name: `Device-${deviceId.substring(0, 8)}`,
+        SendToallWs(clients, {
+          type: "recieve-chat",
+          data: { data: message.data, id: Date.now() },
         });
-        updateConnectedDevices();
-      },
-      message(ws, message) {
-        try {
-          let parsedMessage;
-          if (typeof message === "string") {
-            parsedMessage = JSON.parse(message);
-          } else {
-            parsedMessage = JSON.parse(new TextDecoder().decode(message));
-          }
+      } else if (message.type === "chat-file") {
+        console.log("newfile", message.data);
 
-          switch (parsedMessage.type) {
-            case "requestAuthCode":
-              handleAuthCodeRequest(ws);
-              break;
-            case "removeDevice":
-              handleRemoveDevice(parsedMessage.payload);
-              break;
-          }
-        } catch (error) {
-          console.error("Invalid message", message, error);
-        }
-      },
-      close(ws: ServerWebSocket<MyWebSocketData>) {
-        // Use the defined type here
-        console.log("Client disconnected");
-        const deviceId = ws.data.deviceId; // Now this is valid and typesafe
-        removeDeviceFromList(deviceId);
-      },
+        SendToallWs(clients, {
+          type: "recieve-chat-file",
+          data: { data: message.data, id: Date.now() },
+        });
+      }
+      // console.log(`Received message: ${message}`);
+      // ws.send(`Server received: ${message}`); // Echo back the message
+    },
+    close(ws) {
+      console.log("WebSocket connection closed");
+      // Perform cleanup or handle disconnection
+    },
+    error(ws, error) {
+      console.error("WebSocket error:", error);
     },
   });
+export default app;
 
-  webSocketServer = server; // Store the server instance
-  return server;
+export async function openHostBrowser(port: number, hostname: string) {
+  let sessionId;
+  sessionId = uuidv4();
+  authenticatedSessions.add(sessionId); // Add it to authenticatedSessions
+  // console.log(sessionId);
+
+  Serverhostname = hostname;
+  Serverport = port;
+  // 2. Construct the *direct* qr-login URL
+  const qrLoginUrl = `http://${hostname}:${port}/qr-login?session=${sessionId}`;
+
+  // 3. Open the *qr-login* URL directly
+  await open(qrLoginUrl);
 }

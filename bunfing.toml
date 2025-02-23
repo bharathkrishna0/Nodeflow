@@ -1,0 +1,9 @@
+# bunfig.toml
+
+[watch]
+# Watch all files in the current directory and its subdirectories
+#  You can also specify specific files/folders here.
+dir = ["."]  # "." means the current directory
+
+# Example to watch specific files (alternative to dir):
+# files = ["server.ts", "frontend/dist"]
