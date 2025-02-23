@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useWebSocket } from "../api";
 import { sendFormData } from "./utils";
+import "../styles.css"; //Importing stylesheet
 
 const ChatInterface: React.FC = () => {
   const [messageList, setMessageList] = useState<
@@ -81,27 +82,28 @@ const ChatInterface: React.FC = () => {
 
   return (
     <div
+      id="parentMessageContainer"
       style={{
         height: "500px",
         width: "400px",
-        border: "1px solid #ccc",
         display: "flex",
         flexDirection: "column",
       }}
     >
       <div
+        id="messageDisplay"
         style={{ flexGrow: 1, padding: "10px", overflowY: "auto" }}
         ref={messageListRef}
       >
         {messageList.map((message, index) => (
           <div
+            id="messageContainer"
             key={index}
             style={{
               marginBottom: "8px",
               padding: "8px",
               border: "1px solid #eee",
               borderRadius: "5px",
-              backgroundColor: "#f9f9f9",
             }}
           >
             {message.data}
@@ -109,9 +111,9 @@ const ChatInterface: React.FC = () => {
         ))}
       </div>
       <div
+        id="messageSpace"
         style={{
           padding: "10px",
-          borderTop: "1px solid #ccc",
           display: "flex",
           gap: "10px",
           alignItems: "center",
@@ -126,11 +128,12 @@ const ChatInterface: React.FC = () => {
             id="fileInput"
           />
         )}
-        <label htmlFor="fileInput" style={{ cursor: "pointer" }}>
-          {file ? "Change File" : "Upload File"}
+        <label id="fileLabel" htmlFor="fileInput" style={{ cursor: "pointer" }}>
+          {file ? "Change" : "Upload"}
         </label>
 
         <input
+          id="messageBox"
           type="text"
           style={{ flexGrow: 1, padding: "8px" }}
           placeholder={file ? "" : "Type a message..."} // Placeholder changes
@@ -142,7 +145,7 @@ const ChatInterface: React.FC = () => {
             }
           }}
         />
-        <button onClick={handleSendMessage} style={{ padding: "8px 15px" }}>
+        <button id="sendButton" onClick={handleSendMessage} style={{ padding: "8px 15px" }}>
           Send
         </button>
       </div>
