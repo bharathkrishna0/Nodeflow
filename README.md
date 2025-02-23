@@ -1,6 +1,6 @@
-## NodeFlow, Simple & Open Source Notion Alternative
+## NodeFlow, Simple local file sharing and collaborative editing
 
-NodeFlow is a locally-hosted web application that centralizes personal management tasks like scheduling, finances, and file sharing, enhancing privacy and control without relying on the internet.
+NodeFlow is a locally-hosted web application that helps in file sharing and collaborative live text editing in local network.
 
 ![ Screenshot](docs/authentication.png)
 
@@ -15,11 +15,9 @@ NodeFlow is a locally-hosted web application that centralizes personal managemen
 
 ### ✨ Features
 
-NodeFlow is a comprehensive, locally-hosted personal management system.
+NodeFlow is a comprehensive, locally-hosted file sharing and dynamic text editing.
 
-- Centralized dashboard for scheduling, finances, sleep tracking, workouts, and more.
-
-- Secure local file sharing and texting for enhanced privacy and control within your network.
+- local file sharing and texting  within your network.
 
 - Offline-first design ensures continuous access to your data, even without an internet connection.
 
@@ -77,8 +75,8 @@ https://drive.google.com/drive/folders/1aEhL5zftN20UiFuGlpvTRNyPnx2Ih_3Y?usp=sha
 
 ### Future Developments
 
-- NodeFlow Platform: For developers to build and share custom modules
 - Collaborative Task Lists: Enable multiple users on the local network
+- acessing files in host device
 
 ## Project Structure
 
