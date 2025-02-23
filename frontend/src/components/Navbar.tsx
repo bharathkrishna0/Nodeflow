@@ -55,17 +55,17 @@ const Navbar: React.FC<NavbarProps> = () => {
           Nodeflow
         </Link>
       </div>
-      <div className="navbar-center">
-        <Link to="/journal" className="nav-link">
-          Journal
-        </Link>
-        <Link to="/storage" className="nav-link">
-          Storage
-        </Link>{" "}
-        <Link to="/todos" className="nav-link">
-          Todos
-        </Link>
-      </div>
+      {/* <div className="navbar-center"> */}
+      {/* <Link to="/journal" className="nav-link"> */}
+      {/* Journal */}
+      {/* </Link> */}
+      {/* <Link to="/storage" className="nav-link"> */}
+      {/* Storage */}
+      {/* </Link>{" "} */}
+      {/* <Link to="/todos" className="nav-link"> */}
+      {/* Todos */}
+      {/* </Link> */}
+      {/* </div> */}
       <div className="navbar-right">
         <ModeToggle />
         <div className="dropdown">

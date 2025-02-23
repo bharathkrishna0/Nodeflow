@@ -1,9 +1,9 @@
 // import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./components/Home";
-import Storage from "./components/Storage";
+// import Home from "./components/Home";
+// import Storage from "./components/Storage";
 import TextEditor from "./components/TextEditor"; // Journal
-import Todos from "./components/Todos";
+// import Todos from "./components/Todos";
 // import Auth from "./components/Auth";
 import Navbar from "./components/Navbar";
 import ChatInterface from "./components/chat";
@@ -19,10 +19,10 @@ function App() {
         <Router>
           <Navbar />
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/storage" element={<Storage />} />
+            <Route path="/" element={<TextEditor />} />
+            {/* <Route path="/storage" element={<Storage />} /> */}
             <Route path="/journal" element={<TextEditor />} />
-            <Route path="/todos" element={<Todos />} />
+            {/* <Route path="/todos" element={<Todos />} /> */}
             {/* <Route path="/auth" element={<Auth />} /> */}
           </Routes>
         </Router>
