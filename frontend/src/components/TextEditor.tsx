@@ -5,42 +5,10 @@ import ReactMarkdown from "react-markdown";
 // import remarkPrism from "remark-prism";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { useWebSocket } from "../api";
+import { sendFormData } from "./utils";
 import gfm from "remark-gfm";
 // import remarkMath from "remark-math";
 import rehypeRaw from "rehype-raw";
-
-async function sendFormData(
-  text: string,
-  filename: string,
-  endpoint: string = "/sendfile",
-): Promise<void> {
-  try {
-    const formData = new FormData();
-
-    formData.append("text", text);
-    formData.append("filename", filename);
-    console.log("appended data");
-
-    const response = await fetch(endpoint, {
-      method: "POST",
-      body: formData, // No need to set Content-Type; fetch does it automatically for FormData
-    });
-
-    console.log(response);
-
-    if (!response.ok) {
-      console.log(" failed");
-      const errorText = await response.text(); // Get error details from the server
-      throw new Error(`HTTP error ${response.status}: ${errorText}`); // Throw an error with details
-    }
-
-    const data = await response.text(); // If the server sends back JSON
-    console.log("File uploaded successfully:", data);
-  } catch (error) {
-    console.error("Error uploading file:", error);
-    throw error;
-  }
-}
 
 const TextEditor: React.FC = () => {
   const [markdownText, setMarkdownText] = useState("");
@@ -77,7 +45,7 @@ const TextEditor: React.FC = () => {
   };
 
   const handleSave = () => {
-    const filename = prompt("Enter filename:", "journal_entry.md"); // Default filename
+    const filename = prompt("Enter filename:"); // Default filename
     if (filename === null || filename.trim() === "") {
       // User cancelled or entered an empty filename
       alert("Filename is required.");

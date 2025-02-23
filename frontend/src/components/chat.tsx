@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useWebSocket } from "../api";
+import { sendFormData } from "./utils";
 
 const ChatInterface: React.FC = () => {
   const [messageList, setMessageList] = useState<
@@ -54,24 +55,7 @@ const ChatInterface: React.FC = () => {
     console.log(file);
     if (!file) return;
 
-    try {
-      sendMessage(
-        JSON.stringify({
-          type: "chat-file",
-          data: { type: "chat-file", data: JSON.stringify(file) },
-        }),
-      );
-
-      setFile(null);
-      setMessageInput("");
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // Reset file input
-      }
-    } catch (error) {
-      console.error("File upload error:", error);
-      // Handle upload errors (e.g., display an error message to the user)
-      alert("File upload failed. Please try again.");
-    }
+    sendFormData("file", file, file.name);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
