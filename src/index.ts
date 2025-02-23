@@ -10,7 +10,7 @@ if (!hostname) {
 app.listen({ port: port, hostname: hostname }, () => {
   console.log(`Server started at http://${hostname}:${port}`);
 });
-openHostBrowser(port, "192.168.1.3");
+openHostBrowser(port, hostname);
 // ip_address.ts
 
 console.log(`Elysia is running on port ${app.server?.port}`);
