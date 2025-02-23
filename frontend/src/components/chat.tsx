@@ -15,7 +15,14 @@ async function createMessageTag(message: {
           return <a href="/">{`${message.data} error retrieving file`}</a>; // Return JSX for error link
         }
         const imageUrl = URL.createObjectURL(imageBlob);
-        return <img id="sentImage" src={imageUrl} alt={`Image: ${message.data}`} />; // Return JSX for image
+        return (
+          <img
+            id="sentImage"
+            src={imageUrl}
+            width="300"
+            alt={`Image: ${message.data}`}
+          />
+        ); // Return JSX for image
       } catch (error) {
         console.error("Error getting image:", error);
         return <a href="/">{`${message.data} error retrieving file`}</a>; // JSX for error link
@@ -116,43 +123,23 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div
-      id="parentMessageContainer"
-      ref={messageBoxRef} // Attach the ref
-      style={{
-        height: "500px",
-        width: "400px",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      {messageDisplayVisible && (
-        <div
-          id="messageDisplay"
-          style={{ flexGrow: 1, padding: "10px", overflowY: "auto" }}
-          ref={messageListRef}
-        >
-          <button
-            id="collapse"
-            onClick={handleBlur}
-            style={{ padding: "8px 15px" }}
-          >
-            collapse
-          </button>
+    <div id="parentMessageContainer">
+      <div
+        id="messageDisplay"
+        className={`messageDisplay ${!messageDisplayVisible ? "collapsed" : ""}`}
+        ref={messageListRef}
+      >
+        <button id="collapse" onClick={handleBlur}>
+          collapse
+        </button>
 
-          {messageList.map((message, index) => (
-            <div key={index}>{message}</div> // Render the JSX elements
-          ))}
-        </div>
-      )}
+        {messageList.map((message, index) => (
+          <div key={index}>{message}</div> // Render the JSX elements
+        ))}
+      </div>
       <div
         id="messageSpace"
-        style={{
-          padding: "10px",
-          display: "flex",
-          gap: "10px",
-          alignItems: "center",
-        }}
+        ref={messageBoxRef} // Attach the ref
       >
         {!file && ( // Show file input only if no file is selected
           <input
@@ -170,7 +157,6 @@ const ChatInterface: React.FC = () => {
         <input
           id="messageBox"
           type="text"
-          style={{ flexGrow: 1, padding: "8px" }}
           placeholder={file ? "" : "Type a message..."} // Placeholder changes
           value={messageInput}
           onChange={handleTextChange}
@@ -180,11 +166,7 @@ const ChatInterface: React.FC = () => {
             }
           }}
         />
-        <button
-          id="sendButton"
-          onClick={handleSendMessage}
-          style={{ padding: "8px 15px" }}
-        >
+        <button id="sendButton" onClick={handleSendMessage}>
           Send
         </button>
       </div>
