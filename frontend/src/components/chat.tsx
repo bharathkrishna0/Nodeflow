@@ -32,10 +32,11 @@ import "../styles.css"; //Importing stylesheet
 const ChatInterface: React.FC = () => {
   const [messageList, setMessageList] = useState<JSX.Element[]>([]);
   const [messageInput, setMessageInput] = useState("");
+  const [messageDisplayVisible, setMessageDisplayVisible] = useState(false);
   const [file, setFile] = useState<File | null>(null); // Store the selected file
   const messageListRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null); // Ref for the file input
-
+  const messageBoxRef = useRef<HTMLInputElement | null>(null);
   const { latestMessage, sendMessage } = useWebSocket();
 
   useEffect(() => {
@@ -73,14 +74,6 @@ const ChatInterface: React.FC = () => {
       setMessageInput("");
     }
   };
-
-  const handleFileUpload = async () => {
-    console.log(file);
-    if (!file) return;
-
-    sendFormData("file", file, file.name);
-  };
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
@@ -92,6 +85,26 @@ const ChatInterface: React.FC = () => {
     }
   };
 
+  const handleFileUpload = async () => {
+    console.log(file);
+    if (!file) return;
+
+    sendFormData("file", file, file.name);
+  };
+
+  const handleBlur = () => setMessageDisplayVisible(false);
+  useEffect(() => {
+    // const handleBlur = () => setMessageDisplayVisible(false);
+    const handleFocus = () => setMessageDisplayVisible(true);
+
+    const messageBox = messageBoxRef.current; // Store the current value
+    console.log(messageBox);
+
+    if (messageBox) {
+      messageBox.addEventListener("mouseenter", handleFocus);
+      // messageBox.addEventListener("mouseleave", handleBlur);
+    }
+  }, [messageBoxRef]);
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (file) {
       setFile(null);
@@ -105,6 +118,7 @@ const ChatInterface: React.FC = () => {
   return (
     <div
       id="parentMessageContainer"
+      ref={messageBoxRef} // Attach the ref
       style={{
         height: "500px",
         width: "400px",
@@ -112,15 +126,25 @@ const ChatInterface: React.FC = () => {
         flexDirection: "column",
       }}
     >
-      <div
-        id="messageDisplay"
-        style={{ flexGrow: 1, padding: "10px", overflowY: "auto" }}
-        ref={messageListRef}
-      >
-        {messageList.map((message, index) => (
-          <div key={index}>{message}</div> // Render the JSX elements
-        ))}
-      </div>
+      {messageDisplayVisible && (
+        <div
+          id="messageDisplay"
+          style={{ flexGrow: 1, padding: "10px", overflowY: "auto" }}
+          ref={messageListRef}
+        >
+          <button
+            id="collapse"
+            onClick={handleBlur}
+            style={{ padding: "8px 15px" }}
+          >
+            collapse
+          </button>
+
+          {messageList.map((message, index) => (
+            <div key={index}>{message}</div> // Render the JSX elements
+          ))}
+        </div>
+      )}
       <div
         id="messageSpace"
         style={{
