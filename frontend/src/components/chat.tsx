@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef, JSX } from "react";
 import { useWebSocket } from "../api";
 import { sendFormData, getImage } from "./utils";
-
+interface MessageData {
+  type: string;
+  data: string;
+  id: number;
+}
 async function createMessageTag(message: {
   type: string;
   data: string;
@@ -45,6 +49,38 @@ const ChatInterface: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null); // Ref for the file input
   const messageBoxRef = useRef<HTMLInputElement | null>(null);
   const { latestMessage, sendMessage } = useWebSocket();
+  useEffect(() => {
+    async function fetchHistoryData() {
+      try {
+        const response = await fetch("/chat-history"); // Replace with your server URL
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const datas: MessageData[] = await response.json();
+        async function processData(datas: MessageData[]) {
+          console.log(" processing data");
+          // Replace 'any' with the actual type of 'data'
+          console.log(datas);
+          for (const data of datas) {
+            console.log(data);
+            const content = await createMessageTag(data);
+            setMessageList((prevMessages) => [...prevMessages, content]);
+          }
+        }
+
+        processData(datas);
+      } catch (error) {
+        console.error("Error parsing latest message:", error);
+        console.error("Latest message was:", latestMessage);
+      }
+    }
+    // setHistoryData(data);
+
+    console.log("fetching history data");
+    fetchHistoryData();
+    console.log(messageList);
+  }, []);
 
   useEffect(() => {
     async function processMessage() {

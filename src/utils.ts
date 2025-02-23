@@ -1,9 +1,15 @@
 import QRCode from "qrcode";
-
+import { stringify } from "csv-stringify";
 import { networkInterfaces } from "os";
+import { parse } from "csv-parse";
 
 import fs from "fs";
 import path from "path";
+interface MessageData {
+  type: string;
+  data: string;
+  id: number;
+}
 
 export function generateSecureRandomSixDigitNumber(): string {
   const crypto = require("crypto"); // Import the crypto module
@@ -142,5 +148,94 @@ export async function serveFile(filename: string): Promise<Response> {
   } catch (error) {
     console.error("Error serving file:", error);
     return new Response("Internal server error", { status: 500 });
+  }
+}
+
+export function appendToHistoryCSV(data: MessageData): void {
+  const filename = "historyfile.csv";
+
+  const basedir = path.join(process.cwd(), "data"); // Use process.cwd() for better reliability
+  const filepath = path.join(basedir, filename);
+  // console.log(data, data.type, data.data, data.id);
+
+  const dataToAppend = [
+    data.type,
+    data.data,
+    data.id, // Data as an array for csv-stringify
+  ];
+
+  try {
+    // Check if the file exists. If not, write the header row.
+    const fileExists = fs.existsSync(filepath);
+    const csvStringifier = stringify({
+      header: !fileExists, // Write header only if file doesn't exist
+      columns: ["type", "data", "id"], // Define columns for the header
+    });
+
+    csvStringifier.on("error", (err) => {
+      console.error("CSV stringify error:", err);
+    });
+
+    csvStringifier.on("data", (output) => {
+      fs.appendFileSync(filepath, output, { encoding: "utf8" });
+    });
+
+    csvStringifier.write(dataToAppend);
+    csvStringifier.end();
+
+    console.log(`Successfully appended to ${filename}`);
+  } catch (err) {
+    console.error(`Error appending to ${filename}:`, err);
+  }
+}
+
+export async function readFromHistoryCSV(): Promise<MessageData[]> {
+  const basedir = path.join(process.cwd(), "data");
+  const filename = "historyfile.csv";
+  const filepath = path.join(basedir, filename);
+
+  try {
+    if (!fs.existsSync(filepath)) {
+      console.log(`File ${filename} not found. Returning empty array.`);
+      return [];
+    }
+
+    const fileContent = fs.readFileSync(filepath, { encoding: "utf8" });
+
+    return new Promise<MessageData[]>((resolve, reject) => {
+      const results: MessageData[] = []; // Crucial: Inside the Promise
+
+      parse(
+        fileContent,
+        {
+          columns: true,
+          skip_empty_lines: true,
+        },
+        (err, records) => {
+          if (err) {
+            console.error("Error parsing CSV:", err);
+            return reject(err); // Reject on error
+          }
+
+          if (records) {
+            // Check if records is defined
+            records.forEach((record: any) => {
+              const messageData: MessageData = {
+                type: record.type,
+                data: record.data,
+                id: record.id,
+              };
+              console.log(messageData);
+              results.push(messageData);
+            });
+          }
+
+          resolve(results); // Resolve with the results
+        },
+      );
+    });
+  } catch (err) {
+    console.error(`Error reading from ${filename}:`, err);
+    return []; // Return empty array on file read error
   }
 }

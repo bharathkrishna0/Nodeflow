@@ -9,6 +9,8 @@ import {
   SendToallWs,
   saveDataToFile,
   serveFile,
+  appendToHistoryCSV,
+  readFromHistoryCSV,
 } from "./utils";
 ("./utils.ts");
 import path from "path";
@@ -43,6 +45,11 @@ const app = new Elysia()
       // Not authenticated, redirect to auth.html
       return context.redirect("./auth");
     }
+  })
+  .get("/chat-history", async () => {
+    console.log("sending historyfile");
+    const data = await readFromHistoryCSV();
+    return data; // Elysia automatically serializes the returned data to JSON
   })
   .get("/receivefile", async ({ query }) => {
     const filename = query.filename;
@@ -133,6 +140,11 @@ const app = new Elysia()
         sendQRCodeViaWebSocket(ws, qrLoginUrl, validOTP, clients);
       } else if (message.type === "chat") {
         console.log("newmessage", message.data);
+        appendToHistoryCSV({
+          type: "text",
+          data: message.data,
+          id: Date.now(),
+        });
 
         SendToallWs(clients, {
           type: "recieve-chat",
