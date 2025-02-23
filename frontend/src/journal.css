@@ -5,23 +5,23 @@
 #parentContainer {
   display: flex;
   margin-top: 5%;
-  background-color: hsl(var(--background));
+  background-color: #434c5e;
 }
 
 #displayDiv {
   height: 70vh;
   width: 30vw;
-  background-color: hsl(var(--card));
-  border: 5px solid hsl(var(--border));
+  background-color: #434c5e;
+  border: 5px solid #2e3440;
 }
 
 #textDiv {
   height: 70vh;
-  width: 70vw;
+  width: 100vw;
   border-radius: 10px;
-  background-color: hsl(var(--background)); /* Use text bg color */
+  background-color: #2e3440;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.5);
-  border: 5px solid hsl(var(--border));
+  border: 5px solid #434c5e;
 }
 
 #optionsDiv {
@@ -29,16 +29,15 @@
   align-items: center;
   display: flex;
 }
-
 #optionsList {
   display: flex;
-  font-family: 'Funnel Display', sans-serif;
-  color: hsl(var(--foreground)); /* Text color */
+  font-family: funnel display;
+  color: #d8dee9;
   padding-left: 3%;
 }
 
 .fileButton {
-  color: hsl(var(--foreground)); 
+  color: #d8dee9;
   padding: 10px 1%;
   opacity: 0.5;
   transition: opacity 0.2s;
@@ -47,29 +46,28 @@
 }
 
 .fileButton:hover {
-  color: hsl(var(--foreground));
+  color: #d8dee9;
   opacity: 1;
   cursor: pointer;
 }
-
 #typingDiv {
   justify-content: center;
   align-items: space-between;
 }
 
 #typingSpace {
-  width: 50%;
+  width: 100%;
   height: 100%;
-  max-width: 70vw;
+  max-width: 100vw;
   max-height: 64vh;
   position: absolute;
   background-color: transparent;
-  font-family: 'Funnel Display', sans-serif;
+  font-family: funnel display;
   letter-spacing: 2px;
   padding: 10px 20px;
   outline: none;
   resize: none;
-  color: hsl(var(--foreground));
+  color: #d8dee9;
   font-size: 1rem;
   animation: fade2 1s;
 }
@@ -79,19 +77,21 @@
   outline: none;
 }
 
-/* Markdown Preview */
+/*THIS IS THE THE MARKDOWN DIV*/
 #previewDiv {
-  width: 50%;
+  width: 100%;
   height: 100%;
-  max-width: 70vw;
+  max-width: 100vw;
   max-height: 64vh;
   padding: 10px;
-  background-color: hsl(var(--card));
+  background-color: #2e3440;
   width: 100%;
   height: 100%;
   z-index: 1;
   overflow: hidden;
   overflow-y: scroll;
+  /* position: absolute; */
+  /* display: none; */
 }
 
 @keyframes fade {
@@ -117,3 +117,4 @@
     opacity: 100%;
   }
 }
+
