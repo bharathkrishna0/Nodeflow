@@ -52,7 +52,7 @@ const TextEditor: React.FC = () => {
       return; // Stop the saving process
     }
     console.log("Saving:", markdownText);
-    sendFormData(markdownText, filename);
+    sendFormData(markdownText, filename, "text");
     //Implement save logic (e.g., to local storage or server)
     //Simple download of the text as a file.
     // const blob = new Blob([markdownText], { type: "text/markdown" });
@@ -104,7 +104,7 @@ const TextEditor: React.FC = () => {
               placeholder="Go crazy here . . ."
               onChange={handleInputChange}
               ref={typingSpaceRef}
-              // style={{ display: isPreviewMode ? "block" : "block" }}
+              style={{ display: isPreviewMode ? "none" : "block" }}
             ></textarea>
           </div>
 
@@ -189,10 +189,6 @@ const TextEditor: React.FC = () => {
               }}
               children={markdownText}
             />
-            {/* <Markdown remarkPlugins={[remarkGfm, remarkMath]}> */}
-            {/*   {markdownText} */}
-            {/* </Markdown> */}
-            {/* <Markdown remarkPlugins={[remarkGfm]}>{markdownText}</Markdown> */}
           </div>
         </div>
       </div>
