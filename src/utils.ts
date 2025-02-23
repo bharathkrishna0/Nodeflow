@@ -130,7 +130,7 @@ export async function serveFile(filename: string): Promise<Response> {
   }
 
   try {
-    const filePath = `${filename}`; // Example: Files in an 'uploads' directory
+    const filePath = `${filename}`;
     console.log(filePath);
 
     const fileExists = Bun.file(filePath).exists(); // Elysia uses Bun's file system
@@ -237,5 +237,18 @@ export async function readFromHistoryCSV(): Promise<MessageData[]> {
   } catch (err) {
     console.error(`Error reading from ${filename}:`, err);
     return []; // Return empty array on file read error
+  }
+}
+
+import { readdir } from "node:fs/promises";
+import { join } from "node:path";
+
+export async function getFilePaths(directory = "./data"): Promise<string[]> {
+  try {
+    const files = await readdir(directory);
+    return files.map((file) => join(directory, file)); // Construct full paths
+  } catch (error) {
+    console.error(`Error reading directory ${directory}:`, error);
+    return []; // Or throw the error if you prefer:  throw error;
   }
 }
