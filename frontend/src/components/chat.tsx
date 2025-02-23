@@ -166,7 +166,7 @@ const ChatInterface: React.FC = () => {
         ref={messageListRef}
       >
         <button id="collapse" onClick={handleBlur}>
-          collapse
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#2e3440"><path d="m296-80-56-56 240-240 240 240-56 56-184-184L296-80Zm184-504L240-824l56-56 184 184 184-184 56 56-240 240Z"/></svg>  
         </button>
 
         {messageList.map((message, index) => (

@@ -218,23 +218,23 @@
   outline: none;
   border: 5px solid #2e3440;
   border-radius: 4px;
+  transition: height 0.3s;
+  overflow: hidden;
+  overflow-y: scroll;
 }
 #messageDisplay.collapsed {
   /* display: none; */
-
   height: 0;
 }
 
 #messageSpace {
-  background: rgba(59, 66, 82, 0.5);
+  background: #2e3440;
   box-shadow: 0px 0px 10px black;
   outline: none;
   border: none;
   border-radius: 10px;
-
-  /*Glassomorphism*/
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  padding: 10px 10px;
+  z-index: 2;
 }
 
 #fileLabel {
@@ -255,6 +255,8 @@
   background-color: #d8dee9;
   color: #2e3440;
   caret-color: #2e3440;
+  padding: 5px 10px;
+  margin: 0px 10px;
 }
 #messageBox:focus {
   outline: none;
@@ -285,5 +287,19 @@
 
 #sentImage {
   border: 2px solid #2e3440;
+  margin: 0px 10px;
 }
 
+#collapse {
+  transform: scale(-50%,-50%);
+  margin: 0 0;
+  border: 2px solid transparent;
+  float: right;
+}
+#collapse:focus {
+  outline: none;
+}
+#collapse:hover {
+  outline: none;
+  border: 2px solid #2e3440;
+}
