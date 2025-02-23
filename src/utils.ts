@@ -51,28 +51,26 @@ export function SendToallWs(clients: any, data: any) {
   });
 }
 
-function saveDataToFile(message: {
-  name: string;
-  data: string;
-}): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    if (!message.name) {
-      reject(new Error("Message name is missing!"));
-      return;
+export async function saveDataToFile(
+  filename: string,
+  body: string,
+): Promise<Response> {
+  const fullfilename = `${filename}.txt`;
+  const dataDir = path.join(process.cwd(), "data"); // Use process.cwd() for better reliability
+  const filePath = path.join(dataDir, fullfilename);
+
+  try {
+    await fs.promises.mkdir(dataDir, { recursive: true });
+    await fs.promises.writeFile(filePath, body, { encoding: "utf8" });
+    return new Response("success", { status: 200 }); // Success
+  } catch (err) {
+    console.error("Error saving data:", err); // Log the error for debugging
+    if (err instanceof Error) {
+      console.error("Error saving data:", err); // Log the error for debugging
+      return new Response(err.message, { status: 500 }); // Internal Server Error
+    } else {
+      console.error("Error saving data:", err); // Log the error for debugging
+      return new Response("An unexpected error occurred", { status: 500 });
     }
-
-    const filename = `${message.name}.txt`;
-    const filePath = path.join(__dirname, "data", filename);
-
-    fs.mkdirSync(path.join(__dirname, "data"), { recursive: true });
-
-    fs.writeFile(filePath, message.data, { encoding: "utf8" }, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        console.log(`Data saved to ${filePath}`);
-        resolve();
-      }
-    });
-  });
+  }
 }

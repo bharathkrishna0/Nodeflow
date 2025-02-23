@@ -7,6 +7,7 @@ import {
   sendQRCodeViaWebSocket,
   generateSecureRandomSixDigitNumber,
   SendToallWs,
+  saveDataToFile,
 } from "./utils";
 ("./utils.ts");
 import path from "path";
@@ -73,6 +74,19 @@ const app = new Elysia()
       return new Response("Invalid or expired session.", { status: 401 });
     }
   })
+  .post("/sendfile", async (context) => {
+    const body = await context.request.formData();
+    const filename = body.get("filename") as string;
+    console.log(filename);
+
+    if (filename) {
+      const text = body.get("text") as string;
+      return saveDataToFile(filename, text);
+    } else {
+      return new Response("saving file failed", { status: 401 }); // Unauthorized
+    }
+  })
+
   .post("/auth-code", async (context) => {
     const body = await context.request.formData();
     const authCode = body.get("authCode");

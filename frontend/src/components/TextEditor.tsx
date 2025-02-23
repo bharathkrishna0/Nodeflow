@@ -19,18 +19,22 @@ async function sendFormData(
 
     formData.append("text", text);
     formData.append("filename", filename);
+    console.log("appended data");
 
     const response = await fetch(endpoint, {
       method: "POST",
       body: formData, // No need to set Content-Type; fetch does it automatically for FormData
     });
 
+    console.log(response);
+
     if (!response.ok) {
+      console.log(" failed");
       const errorText = await response.text(); // Get error details from the server
       throw new Error(`HTTP error ${response.status}: ${errorText}`); // Throw an error with details
     }
 
-    const data = await response.json(); // If the server sends back JSON
+    const data = await response.text(); // If the server sends back JSON
     console.log("File uploaded successfully:", data);
   } catch (error) {
     console.error("Error uploading file:", error);
@@ -79,9 +83,9 @@ const TextEditor: React.FC = () => {
       alert("Filename is required.");
       return; // Stop the saving process
     }
+    console.log("Saving:", markdownText);
     sendFormData(markdownText, filename);
     //Implement save logic (e.g., to local storage or server)
-    console.log("Saving:", markdownText);
     //Simple download of the text as a file.
     // const blob = new Blob([markdownText], { type: "text/markdown" });
     // const url = URL.createObjectURL(blob);
