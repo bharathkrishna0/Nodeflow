@@ -36,3 +36,23 @@ export async function sendFormData(
     throw error;
   }
 }
+export async function getImage(filename: string): Promise<Blob | null> {
+  try {
+    const url = `/receivefile?filename=${encodeURIComponent(filename)}`;
+
+    // Send the request to the server.
+    const response = await fetch(url);
+
+    // Check for HTTP errors.
+    if (!response.ok) {
+      console.error(`HTTP error: ${response.status} ${response.statusText}`);
+      return null; // Or throw an error, depending on your needs
+    }
+    const imageBlob = await response.blob();
+
+    return imageBlob;
+  } catch (error) {
+    console.error("Error fetching file:", error);
+    return null; // Or throw the error, depending on your needs
+  }
+}

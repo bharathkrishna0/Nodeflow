@@ -8,6 +8,7 @@ import {
   generateSecureRandomSixDigitNumber,
   SendToallWs,
   saveDataToFile,
+  serveFile,
 } from "./utils";
 ("./utils.ts");
 import path from "path";
@@ -18,9 +19,7 @@ let validOTP: string | null = null;
 const authenticatedSessions = new Set<string>();
 const requestLogger = () => (app: Elysia) =>
   app.onRequest((context) => {
-    const timestamp = new Date().toISOString();
-    const method = context.request.method;
-    const url = context.request.url; // Or context.url for pathname only
+    // const url = context.request.url; // Or context.url for pathname only
     // console.log(`[HTTP Request - ${timestamp}] ${method} ${url}`); // Log method and full URL
   });
 const clients = new Set();
@@ -44,6 +43,10 @@ const app = new Elysia()
       // Not authenticated, redirect to auth.html
       return context.redirect("./auth");
     }
+  })
+  .get("/receivefile", async ({ query }) => {
+    const filename = query.filename;
+    return serveFile(filename || ""); // Call the separate function
   })
   .get("/auth", async () => {
     return Bun.file(path.resolve("./frontend/auth.html"));
@@ -81,8 +84,13 @@ const app = new Elysia()
     console.log(filename);
 
     if (filename) {
-      const data = body.get("data") as string;
-      return saveDataToFile(filename, data, type);
+      if (type === "text") {
+        const data = body.get("data") as string;
+        return saveDataToFile(filename, data, type);
+      } else if (type === "file") {
+        const data = body.get("data") as File;
+        return saveDataToFile(filename, data, type, true, clients);
+      }
     } else {
       return new Response("saving file failed", { status: 401 }); // Unauthorized
     }
@@ -128,14 +136,7 @@ const app = new Elysia()
 
         SendToallWs(clients, {
           type: "recieve-chat",
-          data: { data: message.data, id: Date.now() },
-        });
-      } else if (message.type === "chat-file") {
-        console.log("newfile", message.data);
-
-        SendToallWs(clients, {
-          type: "recieve-chat-file",
-          data: { data: message.data, id: Date.now() },
+          data: { type: "text", data: message.data, id: Date.now() },
         });
       } else if (message.type === "contentUpdate") {
         console.log("new text", message.data);

@@ -1,11 +1,35 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, JSX } from "react";
 import { useWebSocket } from "../api";
-import { sendFormData } from "./utils";
+import { sendFormData, getImage } from "./utils";
+
+async function createMessageTag(message: {
+  type: string;
+  data: string;
+}): Promise<JSX.Element> {
+  if (message.type === "file") {
+    if (message.data.endsWith(".jpg") || message.data.endsWith(".png")) {
+      // Corrected file extension check
+      try {
+        const imageBlob: Blob = (await getImage(message.data)) as Blob; // No need for 'as Blob' if getImage returns a Blob
+        if (!imageBlob) {
+          return <a href="/">{`${message.data} error retrieving file`}</a>; // Return JSX for error link
+        }
+        const imageUrl = URL.createObjectURL(imageBlob);
+        return <img src={imageUrl} alt={`Image: ${message.data}`} />; // Return JSX for image
+      } catch (error) {
+        console.error("Error getting image:", error);
+        return <a href="/">{`${message.data} error retrieving file`}</a>; // JSX for error link
+      }
+    } else {
+      return <a href="/">{message.data}</a>; // JSX for generic link
+    }
+  } else {
+    return <span>{message.data}</span>; // JSX for text
+  }
+}
 
 const ChatInterface: React.FC = () => {
-  const [messageList, setMessageList] = useState<
-    { data: string; id: number }[]
-  >([]);
+  const [messageList, setMessageList] = useState<JSX.Element[]>([]);
   const [messageInput, setMessageInput] = useState("");
   const [file, setFile] = useState<File | null>(null); // Store the selected file
   const messageListRef = useRef<HTMLDivElement>(null);
@@ -14,26 +38,24 @@ const ChatInterface: React.FC = () => {
   const { latestMessage, sendMessage } = useWebSocket();
 
   useEffect(() => {
-    if (latestMessage) {
-      try {
-        const parsedMessage = JSON.parse(latestMessage);
-        if (parsedMessage.type === "recieve-chat") {
-          setMessageList((prevMessages) => [
-            ...prevMessages,
-            parsedMessage.data,
-          ]);
+    async function processMessage() {
+      // Define an async function *inside* useEffect
+      if (latestMessage) {
+        try {
+          const parsedMessage = JSON.parse(latestMessage);
+
+          if (parsedMessage.type === "recieve-chat") {
+            const content = await createMessageTag(parsedMessage.data);
+            setMessageList((prevMessages) => [...prevMessages, content]);
+          }
+        } catch (error) {
+          console.error("Error parsing latest message:", error);
+          console.error("Latest message was:", latestMessage);
         }
-        if (parsedMessage.type === "recieve-chat-file") {
-          setMessageList((prevMessages) => [
-            ...prevMessages,
-            parsedMessage.data,
-          ]);
-        }
-      } catch (error) {
-        console.error("Error parsing latest message:", error);
-        console.error("Latest message was:", latestMessage);
       }
     }
+
+    processMessage();
   }, [latestMessage]);
 
   useEffect(() => {
@@ -94,18 +116,7 @@ const ChatInterface: React.FC = () => {
         ref={messageListRef}
       >
         {messageList.map((message, index) => (
-          <div
-            key={index}
-            style={{
-              marginBottom: "8px",
-              padding: "8px",
-              border: "1px solid #eee",
-              borderRadius: "5px",
-              backgroundColor: "#f9f9f9",
-            }}
-          >
-            {message.data}
-          </div>
+          <div key={index}>{message}</div> // Render the JSX elements
         ))}
       </div>
       <div
